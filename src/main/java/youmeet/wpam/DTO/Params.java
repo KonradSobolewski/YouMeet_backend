@@ -1,21 +1,24 @@
 package youmeet.wpam.DTO;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.hibernate.annotations.Type;
+
+import javax.persistence.Column;
 import java.util.HashMap;
 
 public class Params {
 
-    @JsonProperty(value = "params")
+    @Column(name = "params", columnDefinition = "jsonb")
+    @Type(type = "JsonbType")
     private HashMap<String, Object> params;
 
     public void addParam (String name, Object obj) {
-        params.put(name, obj);
+        this.params.put(name, obj);
     }
 
     public Object getParam (String name) {
         if( hasParam(name) ) {
-            return params.get(name);
+            return this.params.get(name);
         } else {
             return null;
         }
@@ -23,14 +26,14 @@ public class Params {
 
     public String getStringParam(String name, String defaultName) {
         if ( hasParam(name)) {
-            return (String) params.get(name);
+            return (String) this.params.get(name);
         } else {
             return defaultName;
         }
     }
 
     public boolean hasParam (String name) {
-        return params.get(name) != null;
+        return this.params.get(name) != null;
     }
 
     public HashMap<String, Object> getParams() {
@@ -40,4 +43,5 @@ public class Params {
     public void setParams(HashMap<String, Object> params) {
         this.params = params;
     }
+
 }
