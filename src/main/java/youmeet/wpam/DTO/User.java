@@ -3,6 +3,7 @@ package youmeet.wpam.DTO;
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -24,6 +25,10 @@ public class User extends Params {
 
     @Column(name = "firstName", nullable = false)
     private String firstName;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
 
     public User() {
 
@@ -84,6 +89,14 @@ public class User extends Params {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
 
