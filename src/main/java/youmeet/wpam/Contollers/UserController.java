@@ -1,6 +1,7 @@
 package youmeet.wpam.Contollers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import youmeet.wpam.exceptions.UserNotFoundException;
 public class UserController {
 
     @Autowired
+    @Qualifier("userService")
     private UserService userService;
 
     @PreAuthorize("hasAnyRole('ADMIN')")

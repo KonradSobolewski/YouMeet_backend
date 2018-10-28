@@ -6,7 +6,7 @@ import youmeet.wpam.DTO.User;
 
 import java.util.Optional;
 
-@Repository
+@Repository("userRepository")
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findById(Long Id);
 

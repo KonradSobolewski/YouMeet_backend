@@ -3,7 +3,7 @@ package youmeet.wpam.DTO;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user_roles")
+@Table(name = "roles")
 public class Role {
 
     @Id
