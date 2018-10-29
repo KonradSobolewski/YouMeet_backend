@@ -23,7 +23,7 @@ import java.util.Map;
 import org.postgresql.ds.common.PGObjectFactory;
 import org.postgresql.util.PGobject;
 
-public class JsonMapUserType implements UserType {
+public class JsonbType implements UserType {
     private static ObjectWriter objectWriter;
     private static ObjectReader objectReader;
     private static ObjectMapper objectMapper;
