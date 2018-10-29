@@ -1,5 +1,7 @@
 package youmeet.wpam.DTO;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Objects;
@@ -26,8 +28,8 @@ public class User extends Params {
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "users_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<Role> roles;
 
     public User() {

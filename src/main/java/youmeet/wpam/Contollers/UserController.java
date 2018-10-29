@@ -57,9 +57,7 @@ public class UserController {
             throw new UserAlreadyExists();
         }
 
-        User user = userService.saveUser(
-                userService.createUserBody(dto)
-        );
+        User user = userService.createUserBody(dto);
 
         return ResponseEntity.ok(user);
     }

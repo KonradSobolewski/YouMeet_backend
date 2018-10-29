@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static youmeet.wpam.config.UtilsKeys.*;
 
@@ -29,6 +30,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private PasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private RoleService roleService;
 
 
     public List<User> findAll() {
@@ -72,13 +76,16 @@ public class UserService implements UserDetailsService {
         user.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
         user.setParams(
                 new HashMap<String, Object>() {{
-                    put(CREATION_DATE, ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC));
+                    put(CREATION_DATE, ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).toString());
                 }}
         );
 
-        user.setRoles(new HashSet<Role>() {{
-            add(new Role(ROLE_USER));
-        }});
+        User returnedUser = saveUser(user);
+        Set<Role> roles = new HashSet<Role>(){{
+            add(new Role(ROLE_USER, returnedUser));
+        }};
+
+        user.setRoles(roles.stream().map(r -> roleService.saveRole(r)).collect(Collectors.toSet()));
 
         return user;
     }
