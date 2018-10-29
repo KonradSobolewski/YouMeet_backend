@@ -20,18 +20,18 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-//    @Secured(value = {ROLE_ADMIN, ROLE_USER})
+    //    @Secured(value = {ROLE_ADMIN, ROLE_USER})
     @GetMapping(value = "/getAll")
     public ResponseEntity getAllPosts() {
         return new ResponseEntity(userService.findAll(), HttpStatus.OK);
     }
 
-//    @Secured(value = {ROLE_ADMIN, ROLE_USER})
+    //    @Secured(value = {ROLE_ADMIN, ROLE_USER})
     @GetMapping(value = "/getUserById")
     public ResponseEntity getEquipmentById(@RequestParam(value = "id") Long id) {
-        try{
+        try {
             return ResponseEntity.ok(userService.getUserById(id));
-        }catch (UserNotFoundException e){
+        } catch (UserNotFoundException e) {
             return (ResponseEntity) ResponseEntity.notFound();
         }
 
@@ -40,7 +40,7 @@ public class UserController {
     //    @Secured(value = {ROLE_ADMIN, ROLE_USER})
     @DeleteMapping(value = "deleteUser")
     public ResponseEntity deleteUserById(@RequestParam(value = "id") Long id) {
-        if (id != null){
+        if (id != null) {
             userService.deleteUserById(id);
             return ResponseEntity.ok(HttpEntity.EMPTY);
         }
@@ -48,13 +48,13 @@ public class UserController {
     }
 
     //    @Secured(value = {ROLE_ADMIN, ROLE_USER})
-    @PostMapping(value = "createUser", produces = "application/json")
+    @PostMapping(value = "createUser")
     public ResponseEntity createUser(@RequestBody UserSmallDTO dto) throws UserAlreadyExists {
-        if(dto == null){
+        if (dto == null) {
             return (ResponseEntity) ResponseEntity.badRequest();
         }
 
-        if(userService.checkIfUserExistsByEmail(dto.getEmail())){
+        if (userService.checkIfUserExistsByEmail(dto.getEmail())) {
             throw new UserAlreadyExists("User already Exists");
         }
 
