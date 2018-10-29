@@ -2,7 +2,6 @@ package youmeet.wpam.Contollers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import youmeet.wpam.DTO.User;
@@ -23,12 +22,12 @@ public class UserController {
     //    @Secured(value = {ROLE_ADMIN, ROLE_USER})
     @GetMapping(value = "/getAll")
     public ResponseEntity getAllPosts() {
-        return new ResponseEntity(userService.findAll(), HttpStatus.OK);
+        return ResponseEntity.ok(userService.findAll());
     }
 
     //    @Secured(value = {ROLE_ADMIN, ROLE_USER})
     @GetMapping(value = "/getUserById")
-    public ResponseEntity getEquipmentById(@RequestParam(value = "id") Long id) {
+    public ResponseEntity getUserById(@RequestParam(value = "id") Long id) {
         try {
             return ResponseEntity.ok(userService.getUserById(id));
         } catch (UserNotFoundException e) {
