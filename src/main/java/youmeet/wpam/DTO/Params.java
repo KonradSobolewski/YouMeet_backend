@@ -2,10 +2,17 @@ package youmeet.wpam.DTO;
 
 
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 import java.util.HashMap;
 
+@TypeDefs({
+        @TypeDef(name = "JsonMapUserType", typeClass = JsonMapUserType.class)
+})
+@MappedSuperclass
 public class Params {
 
     @Column(name = "params", columnDefinition = "jsonb")
@@ -13,6 +20,7 @@ public class Params {
     private HashMap<String, Object> params;
 
     public void addParam (String name, Object obj) {
+        if(params == null) params = new HashMap<>(5);
         this.params.put(name, obj);
     }
 
@@ -33,7 +41,7 @@ public class Params {
     }
 
     public boolean hasParam (String name) {
-        return this.params.get(name) != null;
+        return this.params.get(name) != null && params.containsKey(name);
     }
 
     public HashMap<String, Object> getParams() {
@@ -42,6 +50,10 @@ public class Params {
 
     public void setParams(HashMap<String, Object> params) {
         this.params = params;
+    }
+
+    public Object getOrDefault(String key, Object defaultValue) {
+        return params != null ? params.getOrDefault(key, defaultValue) : defaultValue;
     }
 
 }

@@ -25,6 +25,7 @@
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -66,7 +67,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
+            <version>9.4.1209</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
