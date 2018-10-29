@@ -55,7 +55,7 @@ public class UserController {
         }
 
         if (userService.checkIfUserExistsByEmail(dto.getEmail())) {
-            throw new UserAlreadyExists("User already Exists");
+            throw new UserAlreadyExists();
         }
 
         User user = userService.saveUser(

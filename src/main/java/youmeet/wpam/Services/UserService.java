@@ -36,11 +36,11 @@ public class UserService implements UserDetailsService {
     }
 
     public User getUserById(Long id) throws UserNotFoundException {
-        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+        return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
     public User getUserByEmail(String email) throws UserNotFoundException {
-        return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
+        return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
     }
 
     @Transactional
