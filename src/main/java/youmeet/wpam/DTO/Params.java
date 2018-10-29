@@ -15,8 +15,8 @@ import java.util.HashMap;
 @MappedSuperclass
 public class Params {
 
-    @Column(name = "params", columnDefinition = "jsonb")
-    @Type(type = "JsonbType")
+    @Column(name = "params")
+    @Type(type = "JsonMapUserType")
     private HashMap<String, Object> params;
 
     public void addParam (String name, Object obj) {
