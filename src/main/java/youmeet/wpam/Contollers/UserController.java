@@ -3,6 +3,7 @@ package youmeet.wpam.Contollers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import youmeet.wpam.DTO.User;
 import youmeet.wpam.DTO.SmallDTO.UserSmallDTO;
@@ -19,13 +20,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    //    @Secured(value = {ROLE_ADMIN, ROLE_USER})
+    @Secured(value = {ROLE_ADMIN, ROLE_USER})
     @GetMapping(value = "/getAll")
     public ResponseEntity getAllPosts() {
         return ResponseEntity.ok(userService.findAll());
     }
 
-    //    @Secured(value = {ROLE_ADMIN, ROLE_USER})
+    @Secured(value = {ROLE_ADMIN, ROLE_USER})
     @GetMapping(value = "/getUserById")
     public ResponseEntity getUserById(@RequestParam(value = "id") Long id) {
         try {
@@ -36,7 +37,7 @@ public class UserController {
 
     }
 
-    //    @Secured(value = {ROLE_ADMIN, ROLE_USER})
+    @Secured(value = {ROLE_ADMIN, ROLE_USER})
     @DeleteMapping(value = "deleteUser")
     public ResponseEntity deleteUserById(@RequestParam(value = "id") Long id) {
         if (id != null) {
@@ -46,7 +47,7 @@ public class UserController {
         return (ResponseEntity) ResponseEntity.notFound();
     }
 
-    //    @Secured(value = {ROLE_ADMIN, ROLE_USER})
+    @Secured(value = {ROLE_ADMIN, ROLE_USER})
     @PostMapping(value = "createUser")
     public ResponseEntity createUser(@RequestBody UserSmallDTO dto) throws UserAlreadyExists {
         if (dto == null) {
