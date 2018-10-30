@@ -61,4 +61,17 @@ public class UserController {
 
         return ResponseEntity.ok(user);
     }
+
+    @GetMapping(value = "login")
+    public ResponseEntity loginUser(){
+
+        return ResponseEntity.ok("Login");
+    }
+
+    @GetMapping(value = "private/lol")
+    public ResponseEntity test() {
+
+        return ResponseEntity.ok("unauthorized");
+    }
+
 }

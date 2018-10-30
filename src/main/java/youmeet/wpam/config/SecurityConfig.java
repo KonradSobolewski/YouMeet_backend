@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -30,31 +31,33 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private PasswordEncoder passwordEncoder;
 
     @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(authProvider());
-    }
-
-    @Bean
-    public DaoAuthenticationProvider authProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userService);
-        authProvider.setPasswordEncoder(passwordEncoder);
-        return authProvider;
+    @Autowired
+    public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
+        auth
+                .userDetailsService(userService)
+                .passwordEncoder(passwordEncoder);
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    public void configure(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests()
+                .antMatchers("/oauth/token").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .httpBasic()
+                .and()
+                .csrf().disable();
 
-        http.csrf().disable();
-        http.authorizeRequests()
-                .antMatchers("**/api/**")
-                .authenticated()
-                .anyRequest()
-                .permitAll();
     }
 }
