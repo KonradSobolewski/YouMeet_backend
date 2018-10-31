@@ -61,11 +61,7 @@ public class UserService implements UserDetailsService {
         });
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByEmail(email);
-        return user.map(UserSecured::new).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-    }
+
 
     public User createUserBody(UserSmallDTO dto) {
         User user = new User();
@@ -82,7 +78,7 @@ public class UserService implements UserDetailsService {
 
         User returnedUser = saveUser(user);
         Set<Role> roles = new HashSet<Role>(){{
-            add(new Role(ROLE_USER, returnedUser));
+            add(new Role("USER", returnedUser));
         }};
 
         user.setRoles(roles.stream().map(r -> roleService.saveRole(r)).collect(Collectors.toSet()));
@@ -93,5 +89,11 @@ public class UserService implements UserDetailsService {
     public boolean checkIfUserExistsByEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         return user.isPresent();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        Optional<User> user = userRepository.findByEmail(s);
+        return user.map(UserSecured::new).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
     }
 }

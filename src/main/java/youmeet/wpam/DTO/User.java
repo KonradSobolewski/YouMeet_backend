@@ -29,19 +29,20 @@ public class User extends Params {
     private String firstName;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Role> roles;
 
     public User() {
 
     }
 
-    public User(String email, String password, String lastName, String firstName, HashMap<String, Object> params) {
+    public User(String email, String password, String lastName, String firstName, HashMap<String, Object> params, Set<Role> roles) {
         this.email = email;
         this.password = password;
         this.lastName = lastName;
         this.firstName = firstName;
         this.setParams(params);
+        this.setRoles(roles);
     }
 
     public User(User user) {
@@ -51,6 +52,7 @@ public class User extends Params {
         this.lastName = user.getLastName();
         this.firstName = user.getFirstName();
         this.setParams( user.getParams());
+        this.setRoles( user.getRoles());
     }
 
     public Long getId() {

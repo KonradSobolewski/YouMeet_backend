@@ -4,12 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import youmeet.wpam.DTO.User;
 import youmeet.wpam.DTO.SmallDTO.UserSmallDTO;
 import youmeet.wpam.Services.UserService;
 import youmeet.wpam.exceptions.UserAlreadyExists;
 import youmeet.wpam.exceptions.UserNotFoundException;
+
+import java.security.Principal;
 
 import static youmeet.wpam.config.UtilsKeys.*;
 
@@ -20,9 +25,11 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Secured(value = {ROLE_ADMIN, ROLE_USER})
+    //@Secured(value = {ROLE_ADMIN, ROLE_USER})
+//    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @GetMapping(value = "/getAll")
     public ResponseEntity getAllPosts() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity.ok(userService.findAll());
     }
 

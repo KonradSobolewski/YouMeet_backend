@@ -1,4 +1,4 @@
-package youmeet.wpam.config;
+package youmeet.wpam.config.JWTConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -22,11 +22,11 @@ import youmeet.wpam.config.JWTConfig.JWTLoginFilter;
 
 import static youmeet.wpam.config.UtilsKeys.ROLE_ADMIN;
 
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @Configuration
 @EnableWebSecurity
-@EnableJpaRepositories(basePackageClasses = User.class)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class
+SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserService userService;
@@ -65,9 +65,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("admin")
-                .password("password")
-                .roles("ADMIN");
+        auth.authenticationProvider(authProvider());
     }
 }

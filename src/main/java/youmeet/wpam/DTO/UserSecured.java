@@ -17,7 +17,7 @@ public class UserSecured extends User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles()
                 .stream()
-                .map(role -> new SimpleGrantedAuthority(role.getRole()))
+                .map(role -> new SimpleGrantedAuthority("ROLE_"+role.getRole()))
                 .collect(Collectors.toList());
     }
 
