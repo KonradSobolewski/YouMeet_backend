@@ -2,15 +2,11 @@ package youmeet.wpam.config.JWTConfig;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security
         .authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
-
-import youmeet.wpam.Services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,10 +38,12 @@ public class TokenAuthenticationService {
                     .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
                     .getBody()
                     .getSubject();
+                if(auth!=null) {
+                    return login != null ?
+                            new UsernamePasswordAuthenticationToken(login, null, auth.getAuthorities()) :
+                            null;
+                }
 
-                return login != null ?
-                        new UsernamePasswordAuthenticationToken(login, null, Collections.emptyList()) :
-                        null;
         }
         return null;
     }

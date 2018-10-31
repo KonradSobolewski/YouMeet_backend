@@ -25,8 +25,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    //@Secured(value = {ROLE_ADMIN, ROLE_USER})
-//    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @Secured(value = {ROLE_ADMIN, ROLE_USER})
     @GetMapping(value = "/getAll")
     public ResponseEntity getAllPosts() {
         return ResponseEntity.ok(userService.findAll());
