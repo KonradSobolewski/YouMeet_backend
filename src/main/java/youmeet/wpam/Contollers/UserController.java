@@ -29,7 +29,6 @@ public class UserController {
 //    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @GetMapping(value = "/getAll")
     public ResponseEntity getAllPosts() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity.ok(userService.findAll());
     }
 

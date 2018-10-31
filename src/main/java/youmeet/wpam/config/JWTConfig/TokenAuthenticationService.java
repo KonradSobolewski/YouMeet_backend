@@ -2,18 +2,22 @@ package youmeet.wpam.config.JWTConfig;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security
         .authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+
+import youmeet.wpam.Services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
 import java.util.Date;
 
-import static java.util.Collections.emptyList;
-
-class TokenAuthenticationService {
+public class TokenAuthenticationService {
     private static final long EXPIRATIONTIME = 864_000_000; // 10 days
     private static final String SECRET = "ThisIsASecret";
     private static final String TOKEN_PREFIX = "Bearer";
@@ -25,22 +29,23 @@ class TokenAuthenticationService {
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATIONTIME))
                 .signWith(SignatureAlgorithm.HS512, SECRET)
                 .compact();
-        res.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + JWT);
+        res.addHeader(TOKEN_PREFIX, JWT);
     }
 
-    static Authentication getAuthentication(HttpServletRequest request) {
+   public static Authentication getAuthentication(HttpServletRequest request)  {
+       Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String token = request.getHeader(HEADER_STRING);
         if (token != null) {
             // parse the token.
-            String user = Jwts.parser()
+            String login = Jwts.parser()
                     .setSigningKey(SECRET)
                     .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
                     .getBody()
                     .getSubject();
 
-            return user != null ?
-                    new UsernamePasswordAuthenticationToken(user, null, emptyList()) :
-                    null;
+                return login != null ?
+                        new UsernamePasswordAuthenticationToken(login, null, Collections.emptyList()) :
+                        null;
         }
         return null;
     }
