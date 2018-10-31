@@ -20,7 +20,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static youmeet.wpam.config.UtilsKeys.*;
+import static youmeet.wpam.config.utils.UtilsKeys.*;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -78,7 +78,7 @@ public class UserService implements UserDetailsService {
 
         User returnedUser = saveUser(user);
         Set<Role> roles = new HashSet<Role>(){{
-            add(new Role("USER", returnedUser));
+            add(new Role(ROLE_USER, returnedUser));
         }};
 
         user.setRoles(roles.stream().map(r -> roleService.saveRole(r)).collect(Collectors.toSet()));

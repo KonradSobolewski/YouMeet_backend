@@ -1,10 +1,9 @@
-package youmeet.wpam.config.JWTConfig;
+package youmeet.wpam.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -15,12 +14,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import youmeet.wpam.DTO.User;
 import youmeet.wpam.Services.UserService;
 import youmeet.wpam.config.JWTConfig.JWTAuthenticationFilter;
 import youmeet.wpam.config.JWTConfig.JWTLoginFilter;
-
-import static youmeet.wpam.config.UtilsKeys.ROLE_ADMIN;
 
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @Configuration

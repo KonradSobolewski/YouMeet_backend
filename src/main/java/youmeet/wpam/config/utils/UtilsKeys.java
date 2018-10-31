@@ -1,4 +1,4 @@
-package youmeet.wpam.config;
+package youmeet.wpam.config.utils;
 
 public class UtilsKeys {
     public static final String ROLE_USER = "ROLE_USER";
