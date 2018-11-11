@@ -1,9 +1,15 @@
 package youmeet.wpam.DTO.SmallDTO;
 
+import javax.validation.constraints.NotNull;
+
 public class UserSmallDTO {
+    @NotNull
     private String email;
+    @NotNull
     private String password;
+    @NotNull
     private String firstName;
+    @NotNull
     private String lastName;
 
     public String getEmail() {
