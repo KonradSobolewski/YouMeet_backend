@@ -12,6 +12,7 @@ import youmeet.wpam.Services.UserService;
 import youmeet.wpam.exceptions.UserAlreadyExists;
 import youmeet.wpam.exceptions.UserNotFoundException;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import static youmeet.wpam.config.utils.UtilsKeys.*;
@@ -40,6 +41,17 @@ public class UserController {
     }
 
     @Secured(value = {ROLE_ADMIN, ROLE_USER})
+    @GetMapping(value = "/api/getUserByEmail")
+    public ResponseEntity getUserByEmail(@RequestParam(value = "email") String email) {
+        try {
+            return ResponseEntity.ok(userService.getUserByEmail(email));
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+    }
+
+    @Secured(value = {ROLE_ADMIN, ROLE_USER})
     @DeleteMapping(value = "/api/deleteUser")
     public ResponseEntity deleteUserById(@RequestParam(value = "id") Long id) {
         if (id != null) {
@@ -50,17 +62,35 @@ public class UserController {
     }
 
     @PostMapping(value = "/createUser")
-    public ResponseEntity createUser(@Valid @RequestBody UserSmallDTO dto) throws UserAlreadyExists {
+    public ResponseEntity createUser(@Valid @RequestBody UserSmallDTO dto) {
         if (dto == null) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
 
         if (userService.checkIfUserExistsByEmail(dto.getEmail())) {
-            throw new UserAlreadyExists();
+            return new ResponseEntity(HttpStatus.CONFLICT);
         }
 
-        User user = userService.createUserBody(dto);
-
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userService.createUserBody(dto));
     }
+
+    @GetMapping(value = "/generateToken")
+    public ResponseEntity generateToken(@RequestParam(value = "email") String email) {
+        try{
+            return ResponseEntity.ok(userService.createTokenForUser(email));
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+
+    }
+
+    @PostMapping(value = "/createFbUserAccount")
+    public ResponseEntity createFbUserAccount(@Valid @RequestBody UserSmallDTO dto) {
+        if (dto == null) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(userService.createFbUserAccount(dto));
+    }
+
 }

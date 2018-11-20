@@ -1,6 +1,9 @@
 package youmeet.wpam.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,9 +13,12 @@ import youmeet.wpam.DTO.Role;
 import youmeet.wpam.DTO.SmallDTO.UserSmallDTO;
 import youmeet.wpam.Repository.UserRepository;
 import youmeet.wpam.DTO.User;
+import youmeet.wpam.config.JWTConfig.TokenAuthenticationService;
 import youmeet.wpam.exceptions.UserNotFoundException;
 import youmeet.wpam.DTO.UserSecured;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -43,8 +49,14 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
-    public Optional<User> getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User getUserByEmail(String email) throws UserNotFoundException {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            return user.get();
+        } else {
+            throw new UserNotFoundException("User not found");
+        }
+
     }
 
     @Transactional
@@ -62,7 +74,6 @@ public class UserService implements UserDetailsService {
     }
 
 
-
     public User createUserBody(UserSmallDTO dto) {
         User user = new User();
 
@@ -77,7 +88,7 @@ public class UserService implements UserDetailsService {
         );
 
         User returnedUser = saveUser(user);
-        Set<Role> roles = new HashSet<Role>(){{
+        Set<Role> roles = new HashSet<Role>() {{
             add(new Role(ROLE_USER, returnedUser));
         }};
 
@@ -95,5 +106,24 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByEmail(s);
         return user.map(UserSecured::new).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+    }
+
+    public String createTokenForUser(String email) throws UserNotFoundException {
+        if (userRepository.existsByEmail(email)){
+            String token = TokenAuthenticationService.generateAuthentication(email);
+            Authentication authentication = TokenAuthenticationService
+                    .getAuthenticationForFb(token);
+
+            SecurityContextHolder.getContext()
+                    .setAuthentication(authentication);
+            return token;
+        }
+        else
+            throw new UserNotFoundException("Username not found");
+    }
+
+    public User createFbUserAccount(UserSmallDTO dto) {
+        Optional<User> user = userRepository.findByEmail(dto.getEmail());
+        return user.orElseGet(() -> createUserBody(dto));
     }
 }
