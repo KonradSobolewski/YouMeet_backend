@@ -3,6 +3,7 @@ package youmeet.wpam.DTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "meeting")
@@ -13,16 +14,20 @@ public class Meeting extends Params{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long meeting_id;
 
-    @Column(name = "place_longitude", nullable = false)
+    @Column(name = "place_longitude")
     private String place_longitude;
 
-    @Column(name = "place_latitude", nullable = false)
+    @Column(name = "place_latitude")
     private String place_latitude;
 
+    @Column(name = "is_one_to_one", nullable = false)
+    private Boolean isOneToOne;
+
+    @NotNull
     @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "inviter_id", nullable = false)
-    private User inviter_id;
+    private User inviter;
 
     public Meeting() {
 
@@ -31,7 +36,7 @@ public class Meeting extends Params{
     public Meeting(String place_longitude, String place_latitude, User inviter_id) {
         this.place_longitude = place_longitude;
         this.place_latitude = place_latitude;
-        this.inviter_id = inviter_id;
+        this.inviter = inviter_id;
     }
 
     public Long getMeeting_id() {
@@ -59,10 +64,10 @@ public class Meeting extends Params{
     }
 
     public User getInviter_id() {
-        return inviter_id;
+        return inviter;
     }
 
     public void setInviter_id(User inviter_id) {
-        this.inviter_id = inviter_id;
+        this.inviter = inviter_id;
     }
 }

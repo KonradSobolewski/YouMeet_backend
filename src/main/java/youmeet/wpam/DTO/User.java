@@ -33,7 +33,7 @@ public class User extends Params {
     private Set<Role> roles;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "meeting", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "inviter", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Meeting> meetings;
 
     public User() {
