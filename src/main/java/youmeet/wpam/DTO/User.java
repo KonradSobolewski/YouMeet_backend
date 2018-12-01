@@ -32,6 +32,10 @@ public class User extends Params {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Role> roles;
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "meeting", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<Meeting> meetings;
+
     public User() {
 
     }
@@ -103,6 +107,13 @@ public class User extends Params {
         this.roles = roles;
     }
 
+    public Set<Meeting> getMeetings() {
+        return meetings;
+    }
+
+    public void setMeetings(Set<Meeting> meetings) {
+        this.meetings = meetings;
+    }
 
     @Override
     public String toString() {
