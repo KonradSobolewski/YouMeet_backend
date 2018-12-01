@@ -93,4 +93,10 @@ public class UserController {
         return ResponseEntity.ok(userService.createFbUserAccount(dto));
     }
 
+    @GetMapping(value = "/getMeetings")
+    public ResponseEntity getMeetings(@RequestParam(value = "user") Long id) {
+        return ResponseEntity.ok(userService.getMeetings());
+
+    }
+
 }

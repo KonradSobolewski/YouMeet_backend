@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import youmeet.wpam.DTO.Meeting;
 import youmeet.wpam.DTO.Role;
 import youmeet.wpam.DTO.SmallDTO.UserSmallDTO;
 import youmeet.wpam.Repository.UserRepository;
@@ -125,5 +126,9 @@ public class UserService implements UserDetailsService {
     public User createFbUserAccount(UserSmallDTO dto) {
         Optional<User> user = userRepository.findByEmail(dto.getEmail());
         return user.orElseGet(() -> createUserBody(dto));
+    }
+
+    public List<Meeting> getMeetings() {
+        return userRepository.getMeetings();
     }
 }
