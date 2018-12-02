@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import youmeet.wpam.DTO.Meeting;
 import youmeet.wpam.DTO.Role;
 import youmeet.wpam.DTO.SmallDTO.UserSmallDTO;
+import youmeet.wpam.Repository.MeetingRepository;
 import youmeet.wpam.Repository.UserRepository;
 import youmeet.wpam.DTO.User;
 import youmeet.wpam.config.JWTConfig.TokenAuthenticationService;
@@ -34,6 +35,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private MeetingRepository meetingRepository;
 
     @Autowired
     private PasswordEncoder bCryptPasswordEncoder;
@@ -129,6 +133,6 @@ public class UserService implements UserDetailsService {
     }
 
     public List<Meeting> getMeetings() {
-        return userRepository.getMeetings();
+        return meetingRepository.getMeetings();
     }
 }

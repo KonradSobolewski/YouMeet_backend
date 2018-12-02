@@ -94,7 +94,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/getMeetings")
-    public ResponseEntity getMeetings(@RequestParam(value = "user") Long id) {
+    public ResponseEntity getMeetings() {
         return ResponseEntity.ok(userService.getMeetings());
 
     }

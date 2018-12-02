@@ -29,8 +29,26 @@ public class Meeting extends Params{
     @JoinColumn(name = "inviter_id", nullable = false)
     private User inviter;
 
+
+
     public Meeting() {
 
+    }
+
+    public Boolean getOneToOne() {
+        return isOneToOne;
+    }
+
+    public void setOneToOne(Boolean oneToOne) {
+        isOneToOne = oneToOne;
+    }
+
+    public User getInviter() {
+        return inviter;
+    }
+
+    public void setInviter(User inviter) {
+        this.inviter = inviter;
     }
 
     public Meeting(String place_longitude, String place_latitude, User inviter_id) {
