@@ -24,7 +24,7 @@ public class Meeting extends Params{
     private Boolean isOneToOne;
 
     @Column(name = "inviter_id", nullable = false)
-    private Long inviter;
+    private Long inviter_id;
 
 
     public Meeting() {
@@ -39,18 +39,10 @@ public class Meeting extends Params{
         isOneToOne = oneToOne;
     }
 
-    public Long getInviter() {
-        return inviter;
-    }
-
-    public void setInviter(Long inviter) {
-        this.inviter = inviter;
-    }
-
     public Meeting(String place_longitude, String place_latitude, Long inviter_id) {
         this.place_longitude = place_longitude;
         this.place_latitude = place_latitude;
-        this.inviter = inviter_id;
+        this.inviter_id = inviter_id;
     }
 
     public Long getMeeting_id() {
@@ -78,10 +70,10 @@ public class Meeting extends Params{
     }
 
     public Long getInviter_id() {
-        return inviter;
+        return inviter_id;
     }
 
     public void setInviter_id(Long inviter_id) {
-        this.inviter = inviter_id;
+        this.inviter_id = inviter_id;
     }
 }
