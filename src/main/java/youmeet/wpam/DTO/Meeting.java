@@ -23,12 +23,8 @@ public class Meeting extends Params{
     @Column(name = "is_one_to_one", nullable = false)
     private Boolean isOneToOne;
 
-    @NotNull
-    @JsonBackReference
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "inviter_id", nullable = false)
-    private User inviter;
-
+    @Column(name = "inviter_id", nullable = false)
+    private Long inviter;
 
 
     public Meeting() {
@@ -43,15 +39,15 @@ public class Meeting extends Params{
         isOneToOne = oneToOne;
     }
 
-    public User getInviter() {
+    public Long getInviter() {
         return inviter;
     }
 
-    public void setInviter(User inviter) {
+    public void setInviter(Long inviter) {
         this.inviter = inviter;
     }
 
-    public Meeting(String place_longitude, String place_latitude, User inviter_id) {
+    public Meeting(String place_longitude, String place_latitude, Long inviter_id) {
         this.place_longitude = place_longitude;
         this.place_latitude = place_latitude;
         this.inviter = inviter_id;
@@ -81,11 +77,11 @@ public class Meeting extends Params{
         this.place_latitude = place_latitude;
     }
 
-    public User getInviter_id() {
+    public Long getInviter_id() {
         return inviter;
     }
 
-    public void setInviter_id(User inviter_id) {
+    public void setInviter_id(Long inviter_id) {
         this.inviter = inviter_id;
     }
 }
