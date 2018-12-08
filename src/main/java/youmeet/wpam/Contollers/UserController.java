@@ -100,6 +100,7 @@ public class UserController {
 
     }
 
+    @Secured(value = {ROLE_ADMIN, ROLE_USER})
     @GetMapping(value = "/api/getCategories")
     public ResponseEntity getCategories() {
         return ResponseEntity.ok(userService.getCategories());
