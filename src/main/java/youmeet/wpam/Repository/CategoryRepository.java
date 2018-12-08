@@ -8,4 +8,8 @@ import java.util.List;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
+
+    @Query(value = "SELECT * FROM categories", nativeQuery = true)
+    List<Category> getCategories();
+
 }

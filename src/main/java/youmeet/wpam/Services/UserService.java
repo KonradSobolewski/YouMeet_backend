@@ -137,5 +137,5 @@ public class UserService implements UserDetailsService {
         return meetingRepository.getMeetings(user_id);
     }
 
-    public List<Category> getCategories() { return categoryRepository.findAll(); }
+    public List<Category> getCategories() { return categoryRepository.getCategories(); }
 }

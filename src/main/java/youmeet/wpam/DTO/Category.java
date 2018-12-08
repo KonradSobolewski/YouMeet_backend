@@ -12,9 +12,11 @@ public class Category {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @NotNull
     private Long id;
 
     @Column(name = "type")
+    @NotNull
     private String type;
 
     public Category() {
