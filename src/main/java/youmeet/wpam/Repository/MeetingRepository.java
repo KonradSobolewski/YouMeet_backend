@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface MeetingRepository extends JpaRepository<Meeting, Long> {
 
-    @Query(value = "SELECT * FROM meeting", nativeQuery = true)
-    List<Meeting> getMeetings();
+    @Query(value = "SELECT * FROM meeting WHERE inviter_id <> ?1", nativeQuery = true)
+    List<Meeting> getMeetings(Long user_id);
 
 }

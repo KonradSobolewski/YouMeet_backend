@@ -96,7 +96,7 @@ public class UserController {
     @Secured(value = {ROLE_ADMIN, ROLE_USER})
     @GetMapping(value = "/api/getMeetings")
     public ResponseEntity getMeetings(@RequestParam(value = "user_id") Long user_id) {
-        return ResponseEntity.ok(userService.getMeetings());
+        return ResponseEntity.ok(userService.getMeetings(user_id));
 
     }
 

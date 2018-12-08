@@ -132,7 +132,7 @@ public class UserService implements UserDetailsService {
         return user.orElseGet(() -> createUserBody(dto));
     }
 
-    public List<Meeting> getMeetings() {
-        return meetingRepository.getMeetings();
+    public List<Meeting> getMeetings(Long user_id) {
+        return meetingRepository.getMeetings(user_id);
     }
 }
