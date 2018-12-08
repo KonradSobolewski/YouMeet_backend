@@ -9,15 +9,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import youmeet.wpam.DTO.Meeting;
-import youmeet.wpam.DTO.Role;
+import youmeet.wpam.DTO.*;
 import youmeet.wpam.DTO.SmallDTO.UserSmallDTO;
+import youmeet.wpam.Repository.CategoryRepository;
 import youmeet.wpam.Repository.MeetingRepository;
 import youmeet.wpam.Repository.UserRepository;
-import youmeet.wpam.DTO.User;
 import youmeet.wpam.config.JWTConfig.TokenAuthenticationService;
 import youmeet.wpam.exceptions.UserNotFoundException;
-import youmeet.wpam.DTO.UserSecured;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,6 +36,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private MeetingRepository meetingRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Autowired
     private PasswordEncoder bCryptPasswordEncoder;
@@ -135,4 +136,6 @@ public class UserService implements UserDetailsService {
     public List<Meeting> getMeetings(Long user_id) {
         return meetingRepository.getMeetings(user_id);
     }
+
+    public List<Category> getCategories() { return categoryRepository.findAll(); }
 }

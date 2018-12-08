@@ -100,4 +100,10 @@ public class UserController {
 
     }
 
+    @GetMapping(value = "/api/getCategories")
+    public ResponseEntity getCategories() {
+        return ResponseEntity.ok(userService.getCategories());
+
+    }
+
 }
