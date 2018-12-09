@@ -20,29 +20,39 @@ public class Meeting extends Params{
     @Column(name = "place_latitude")
     private String place_latitude;
 
-    @Column(name = "is_one_to_one", nullable = false)
-    private Boolean isOneToOne;
+    @Column(name = "is_one_to_one")
+    private Boolean is_one_to_one;
 
     @Column(name = "inviter_id", nullable = false)
     private Long inviter_id;
 
+    @Column(name = "category", nullable = false)
+    private Long category;
 
     public Meeting() {
 
     }
 
-    public Boolean getOneToOne() {
-        return isOneToOne;
-    }
-
-    public void setOneToOne(Boolean oneToOne) {
-        isOneToOne = oneToOne;
+    public Meeting(String place_longitude, String place_latitude, Boolean isOneToOne, Long inviter_id, Long category) {
+        this.place_longitude = place_longitude;
+        this.place_latitude = place_latitude;
+        this.is_one_to_one = isOneToOne;
+        this.inviter_id = inviter_id;
+        this.category = category;
     }
 
     public Meeting(String place_longitude, String place_latitude, Long inviter_id) {
         this.place_longitude = place_longitude;
         this.place_latitude = place_latitude;
         this.inviter_id = inviter_id;
+    }
+
+    public Long getCategory() {
+        return category;
+    }
+
+    public void setCategory(Long category) {
+        this.category = category;
     }
 
     public Long getMeeting_id() {
@@ -75,5 +85,13 @@ public class Meeting extends Params{
 
     public void setInviter_id(Long inviter_id) {
         this.inviter_id = inviter_id;
+    }
+
+    public Boolean getIs_one_to_one() {
+        return is_one_to_one;
+    }
+
+    public void setIs_one_to_one(Boolean is_one_to_one) {
+        this.is_one_to_one = is_one_to_one;
     }
 }

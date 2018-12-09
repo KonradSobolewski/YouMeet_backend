@@ -133,6 +133,25 @@ public class UserService implements UserDetailsService {
         return user.orElseGet(() -> createUserBody(dto));
     }
 
+    @Transactional
+    public Meeting saveMeeting(Meeting meeting) {
+        return meetingRepository.save(meeting);
+    }
+
+
+    public Meeting createMeeting(Meeting dto) {
+        Meeting meeting = new Meeting();
+
+        meeting.setPlace_latitude("0");
+        meeting.setPlace_longitude("0");
+        meeting.setIs_one_to_one(dto.getIs_one_to_one());
+        meeting.setInviter_id(dto.getInviter_id());
+        meeting.setCategory(dto.getCategory());
+
+        saveMeeting(meeting);
+        return saveMeeting(meeting);
+    }
+
     public List<Meeting> getMeetings(Long user_id) {
         return meetingRepository.getMeetings(user_id);
     }

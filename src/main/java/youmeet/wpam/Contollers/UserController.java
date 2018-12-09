@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import youmeet.wpam.DTO.Meeting;
 import youmeet.wpam.DTO.User;
 import youmeet.wpam.DTO.SmallDTO.UserSmallDTO;
 import youmeet.wpam.Services.UserService;
@@ -98,6 +99,15 @@ public class UserController {
     public ResponseEntity getMeetings(@RequestParam(value = "user_id") Long user_id) {
         return ResponseEntity.ok(userService.getMeetings(user_id));
 
+    }
+
+    @PostMapping(value = "/createMeeting")
+    public ResponseEntity createMeeting(@Valid @RequestBody Meeting dto) {
+        if (dto == null) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(userService.createMeeting(dto));
     }
 
     @Secured(value = {ROLE_ADMIN, ROLE_USER})
