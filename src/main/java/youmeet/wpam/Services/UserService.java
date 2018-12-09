@@ -90,6 +90,9 @@ public class UserService implements UserDetailsService {
         user.setParams(
                 new HashMap<String, Object>() {{
                     put(CREATION_DATE, ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).toString());
+                    if (dto.hasParam(PHOTO)) {
+                        put(CREATION_DATE, dto.getStringParam(PHOTO, null));
+                    }
                 }}
         );
 
@@ -147,6 +150,8 @@ public class UserService implements UserDetailsService {
         meeting.setIs_one_to_one(dto.getIs_one_to_one());
         meeting.setInviter_id(dto.getInviter_id());
         meeting.setCategory(dto.getCategory());
+        if (dto.hasParam(DESCRIPTION))
+            meeting.addParam(DESCRIPTION, dto.getStringParam(DESCRIPTION, null));
 
         saveMeeting(meeting);
         return saveMeeting(meeting);

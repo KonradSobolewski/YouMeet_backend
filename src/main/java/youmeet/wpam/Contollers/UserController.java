@@ -101,7 +101,7 @@ public class UserController {
 
     }
 
-    @PostMapping(value = "/createMeeting")
+    @PostMapping(value = "api/createMeeting")
     public ResponseEntity createMeeting(@Valid @RequestBody Meeting dto) {
         if (dto == null) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);

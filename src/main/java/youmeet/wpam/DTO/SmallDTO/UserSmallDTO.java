@@ -1,8 +1,10 @@
 package youmeet.wpam.DTO.SmallDTO;
 
+import youmeet.wpam.DTO.Params;
+
 import javax.validation.constraints.NotNull;
 
-public class UserSmallDTO {
+public class UserSmallDTO extends Params {
     @NotNull
     private String email;
     @NotNull
