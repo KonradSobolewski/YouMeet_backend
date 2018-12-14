@@ -1,4 +1,4 @@
-package youmeet.wpam.DTO;
+package youmeet.wpam.Entities;
 
 
 import org.hibernate.annotations.Type;
@@ -7,6 +7,7 @@ import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @TypeDefs({
@@ -32,6 +33,18 @@ public class Params {
         }
     }
 
+    public <T> T[] getArrayParam(String name, T[] defaultValue){
+        Object object = getParam(name);
+        if (object.getClass().isArray()) {
+            ArrayList<Object> resultList = new ArrayList<>();
+            for (Object ob: (ArrayList<Object>)object) {
+                resultList.add(ob);
+            }
+            return (T[]) resultList.toArray();
+        }
+        return defaultValue;
+    }
+
     public String getStringParam(String name, String defaultName) {
         if (hasParam(name)) {
             return (String) this.params.get(name);
@@ -41,6 +54,8 @@ public class Params {
     }
 
     public boolean hasParam(String name) {
+        if (this.params == null)
+            return false;
         return this.params.get(name) != null && params.containsKey(name);
     }
 

@@ -2,10 +2,8 @@ package youmeet.wpam.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import youmeet.wpam.DTO.Meeting;
-import youmeet.wpam.DTO.User;
+import youmeet.wpam.Entities.User;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository

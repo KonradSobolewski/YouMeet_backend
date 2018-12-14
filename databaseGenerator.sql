@@ -5,9 +5,7 @@ create database youmeet
 create sequence hibernate_sequence
 ;
 
-alter sequence hibernate_sequence owner to pawel
-;
-
+--  users
 create table users
 (
 	id serial not null
@@ -21,9 +19,6 @@ create table users
 )
 ;
 
-alter table users owner to postgres
-;
-
 create unique index users_id_uindex
 	on users (id)
 ;
@@ -32,6 +27,7 @@ create unique index users_email_uindex
 	on users (email)
 ;
 
+--  roles
 create table roles
 (
 	id serial not null
@@ -44,13 +40,11 @@ create table roles
 )
 ;
 
-alter table roles owner to postgres
-;
-
 create unique index role_id_uindex
 	on roles (id)
 ;
 
+--  meeting
 create table meeting
 (
 	meeting_id serial not null
@@ -66,13 +60,12 @@ create table meeting
 )
 ;
 
-alter table meeting owner to pawel
-;
 
 create unique index meeting_id_uindex
 	on meeting (meeting_id)
 ;
 
+--    categories
 create table categories
 (
 	id serial not null
@@ -82,9 +75,6 @@ create table categories
 )
 ;
 
-alter table categories owner to pawel
-;
-
 create unique index categories_id_uindex
 	on categories (id)
 ;
@@ -92,4 +82,30 @@ create unique index categories_id_uindex
 create unique index categories_type_uindex
 	on categories (type)
 ;
+
+--     hobby
+create table hobby
+(
+	id   serial not null
+		constraint hobby_pk
+			primary key,
+	name text   not null
+);
+
+create unique index hobby_id_uindex
+on hobby (id);
+
+create unique index hobby_name_uindex
+on hobby (name);
+
+
+--   user hobby
+create table user_hobby
+(
+	user_id integer not null,
+	params  jsonb
+);
+
+create unique index user_hobby_user_id_uindex
+on user_hobby (user_id);
 

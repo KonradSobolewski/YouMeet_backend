@@ -1,9 +1,6 @@
-package youmeet.wpam.DTO;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
+package youmeet.wpam.Entities;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "meeting")

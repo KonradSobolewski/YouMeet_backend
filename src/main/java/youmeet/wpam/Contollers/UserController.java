@@ -6,14 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-import youmeet.wpam.DTO.Meeting;
-import youmeet.wpam.DTO.User;
-import youmeet.wpam.DTO.SmallDTO.UserSmallDTO;
+import youmeet.wpam.DTO.UserSmallDTO;
 import youmeet.wpam.Services.UserService;
-import youmeet.wpam.exceptions.UserAlreadyExists;
 import youmeet.wpam.exceptions.UserNotFoundException;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import static youmeet.wpam.config.utils.UtilsKeys.*;
@@ -39,6 +35,13 @@ public class UserController {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
 
+    }
+
+    @Secured(value = {ROLE_ADMIN, ROLE_USER})
+    @PostMapping(value = "/api/updateUser")
+    public ResponseEntity updateUser(@RequestBody UserSmallDTO dto) {
+        userService.updateUser(dto);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @Secured(value = {ROLE_ADMIN, ROLE_USER})
@@ -93,28 +96,4 @@ public class UserController {
 
         return ResponseEntity.ok(userService.createFbUserAccount(dto));
     }
-
-    @Secured(value = {ROLE_ADMIN, ROLE_USER})
-    @GetMapping(value = "/api/getMeetings")
-    public ResponseEntity getMeetings(@RequestParam(value = "user_id") Long user_id) {
-        return ResponseEntity.ok(userService.getMeetings(user_id));
-
-    }
-
-    @PostMapping(value = "api/createMeeting")
-    public ResponseEntity createMeeting(@Valid @RequestBody Meeting dto) {
-        if (dto == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
-
-        return ResponseEntity.ok(userService.createMeeting(dto));
-    }
-
-    @Secured(value = {ROLE_ADMIN, ROLE_USER})
-    @GetMapping(value = "/api/getCategories")
-    public ResponseEntity getCategories() {
-        return ResponseEntity.ok(userService.getCategories());
-
-    }
-
 }

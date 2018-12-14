@@ -8,7 +8,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import youmeet.wpam.DTO.AccountCredentials;
+import youmeet.wpam.Entities.AccountCredentials;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

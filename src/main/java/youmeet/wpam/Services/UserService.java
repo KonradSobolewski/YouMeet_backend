@@ -1,7 +1,6 @@
 package youmeet.wpam.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,16 +8,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import youmeet.wpam.DTO.*;
-import youmeet.wpam.DTO.SmallDTO.UserSmallDTO;
-import youmeet.wpam.Repository.CategoryRepository;
-import youmeet.wpam.Repository.MeetingRepository;
+import youmeet.wpam.DTO.UserSmallDTO;
+import youmeet.wpam.Entities.Role;
+import youmeet.wpam.Entities.User;
+import youmeet.wpam.Entities.UserSecured;
 import youmeet.wpam.Repository.UserRepository;
 import youmeet.wpam.config.JWTConfig.TokenAuthenticationService;
 import youmeet.wpam.exceptions.UserNotFoundException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -27,6 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static youmeet.wpam.config.utils.UtilsKeys.*;
+import static youmeet.wpam.config.utils.functionService.getStringArray;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -35,16 +33,13 @@ public class UserService implements UserDetailsService {
     private UserRepository userRepository;
 
     @Autowired
-    private MeetingRepository meetingRepository;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
     private PasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private UserHobbiesService userHobbiesService;
 
 
     public List<User> findAll() {
@@ -91,7 +86,7 @@ public class UserService implements UserDetailsService {
                 new HashMap<String, Object>() {{
                     put(CREATION_DATE, ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).toString());
                     if (dto.hasParam(PHOTO)) {
-                        put(CREATION_DATE, dto.getStringParam(PHOTO, null));
+                        put(PHOTO, dto.getStringParam(PHOTO, null));
                     }
                 }}
         );
@@ -137,29 +132,27 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public Meeting saveMeeting(Meeting meeting) {
-        return meetingRepository.save(meeting);
+    public void updateUser(UserSmallDTO dto) {
+        if(dto.getEmail() != null) {
+            Optional<User> user = userRepository.findByEmail(dto.getEmail());
+            user.ifPresent( u -> {
+                if(dto.getFirstName() != null) {
+                    u.setFirstName(dto.getFirstName());
+                }
+                if(dto.getLastName() != null) {
+                    u.setLastName(dto.getLastName());
+                }
+                if(dto.getPassword() != null) {
+                    u.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
+                }
+                if(dto.hasParam(HOBBIES)) {
+                    List<String> actualHobbies = getStringArray(dto.getParam(HOBBIES));
+                    userHobbiesService.addNewHobbiesToUser(u, actualHobbies);
+                }
+                if(dto.hasParam(PHOTO)) {
+                    u.addParam(PHOTO, dto.getStringParam(PHOTO,""));
+                }
+            });
+        }
     }
-
-
-    public Meeting createMeeting(Meeting dto) {
-        Meeting meeting = new Meeting();
-
-        meeting.setPlace_latitude("0");
-        meeting.setPlace_longitude("0");
-        meeting.setIs_one_to_one(dto.getIs_one_to_one());
-        meeting.setInviter_id(dto.getInviter_id());
-        meeting.setCategory(dto.getCategory());
-        if (dto.hasParam(DESCRIPTION))
-            meeting.addParam(DESCRIPTION, dto.getStringParam(DESCRIPTION, null));
-
-        saveMeeting(meeting);
-        return saveMeeting(meeting);
-    }
-
-    public List<Meeting> getMeetings(Long user_id) {
-        return meetingRepository.getMeetings(user_id);
-    }
-
-    public List<Category> getCategories() { return categoryRepository.getCategories(); }
 }

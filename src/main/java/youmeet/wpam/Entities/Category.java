@@ -1,4 +1,4 @@
-package youmeet.wpam.DTO;
+package youmeet.wpam.Entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 

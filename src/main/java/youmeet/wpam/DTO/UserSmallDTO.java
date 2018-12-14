@@ -1,6 +1,6 @@
-package youmeet.wpam.DTO.SmallDTO;
+package youmeet.wpam.DTO;
 
-import youmeet.wpam.DTO.Params;
+import youmeet.wpam.Entities.Params;
 
 import javax.validation.constraints.NotNull;
 
