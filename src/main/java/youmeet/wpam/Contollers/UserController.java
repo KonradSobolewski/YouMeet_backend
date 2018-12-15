@@ -40,8 +40,9 @@ public class UserController {
     @Secured(value = {ROLE_ADMIN, ROLE_USER})
     @PostMapping(value = "/api/updateUser")
     public ResponseEntity updateUser(@RequestBody UserSmallDTO dto) {
-        userService.updateUser(dto);
-        return ResponseEntity.ok(HttpStatus.OK);
+        return userService.updateUser(dto)
+                .map(ResponseEntity::ok)
+                .orElseGet(ResponseEntity.badRequest()::build);
     }
 
     @Secured(value = {ROLE_ADMIN, ROLE_USER})

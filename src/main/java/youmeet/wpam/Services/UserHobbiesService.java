@@ -32,6 +32,11 @@ public class UserHobbiesService {
        return userHobbiesRepository.getByUserId(user_id);
     }
 
+
+    public UserHobby saveUserHobby(UserHobby userHobby) {
+        return userHobbiesRepository.save(userHobby);
+    }
+
     public List<Hobby> getAllUserHobbies(String email){
         Optional<User> user = userRepository.findByEmail(email);
         if(!user.isPresent())

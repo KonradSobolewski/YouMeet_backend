@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import youmeet.wpam.DTO.UserSmallDTO;
 import youmeet.wpam.Entities.Role;
 import youmeet.wpam.Entities.User;
+import youmeet.wpam.Entities.UserHobby;
 import youmeet.wpam.Entities.UserSecured;
 import youmeet.wpam.Repository.UserRepository;
 import youmeet.wpam.config.JWTConfig.TokenAuthenticationService;
@@ -98,6 +99,13 @@ public class UserService implements UserDetailsService {
 
         user.setRoles(roles.stream().map(r -> roleService.saveRole(r)).collect(Collectors.toSet()));
 
+        UserHobby userHobby = new UserHobby();
+        userHobby.setUser_id(user.getId());
+        userHobby.setParams(new HashMap<String, Object>(){{
+            put(HOBBIES, Collections.EMPTY_LIST);
+        }});
+        userHobbiesService.saveUserHobby(userHobby);
+
         return user;
     }
 
@@ -132,10 +140,10 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void updateUser(UserSmallDTO dto) {
+    public Optional<User> updateUser(UserSmallDTO dto) {
         if(dto.getEmail() != null) {
             Optional<User> user = userRepository.findByEmail(dto.getEmail());
-            user.ifPresent( u -> {
+            return user.map( u -> {
                 if(dto.getFirstName() != null) {
                     u.setFirstName(dto.getFirstName());
                 }
@@ -152,7 +160,9 @@ public class UserService implements UserDetailsService {
                 if(dto.hasParam(PHOTO)) {
                     u.addParam(PHOTO, dto.getStringParam(PHOTO,""));
                 }
+                return saveUser(u);
             });
         }
+        return Optional.empty();
     }
 }
