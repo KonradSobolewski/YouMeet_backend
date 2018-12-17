@@ -7,10 +7,12 @@ import youmeet.wpam.Entities.Meeting;
 import youmeet.wpam.Repository.MeetingRepository;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 
-import static youmeet.wpam.config.utils.UtilsKeys.DESCRIPTION;
-import static youmeet.wpam.config.utils.UtilsKeys.PLACE_DESCRIPTION;
+import static youmeet.wpam.config.utils.UtilsKeys.*;
 
 @Service
 public class MeetingService {
@@ -37,6 +39,8 @@ public class MeetingService {
 
         if (dto.getPlaceDescription() != null)
             meeting.addParam(PLACE_DESCRIPTION, dto.getPlaceDescription());
+
+        meeting.addParam(CREATION_DATE, ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).toString());
 
         return saveMeeting(meeting);
     }

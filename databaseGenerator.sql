@@ -15,7 +15,8 @@ create table users
 	password text not null,
 	params jsonb,
 	first_name text not null,
-	last_name text not null
+	last_name text not null,
+	update_date text
 )
 ;
 

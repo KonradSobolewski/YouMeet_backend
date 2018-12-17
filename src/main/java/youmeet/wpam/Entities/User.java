@@ -28,23 +28,25 @@ public class User extends Params {
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
+    @Column(name = "update_date", nullable = false)
+    private String updateDate;
+
     @JsonManagedReference
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Role> roles;
-
-
 
     public User() {
 
     }
 
-    public User(String email, String password, String lastName, String firstName, HashMap<String, Object> params, Set<Role> roles) {
+    public User(String email, String password, String lastName, String firstName, HashMap<String, Object> params, Set<Role> roles, String updateDate) {
         this.email = email;
         this.password = password;
         this.lastName = lastName;
         this.firstName = firstName;
         this.setParams(params);
         this.setRoles(roles);
+        this.updateDate = updateDate;
     }
 
     public User(User user) {
@@ -55,6 +57,7 @@ public class User extends Params {
         this.firstName = user.getFirstName();
         this.setParams( user.getParams());
         this.setRoles( user.getRoles());
+        this.updateDate = user.getUpdateDate();
     }
 
     public Long getId() {
@@ -105,6 +108,13 @@ public class User extends Params {
         this.roles = roles;
     }
 
+    public String getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(String updateDate) {
+        this.updateDate = updateDate;
+    }
 
     @Override
     public String toString() {
@@ -114,6 +124,7 @@ public class User extends Params {
                 ", password='" + password + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", firstName='" + firstName + '\'' +
+                ", updateDate='" + updateDate + '\'' +
                 '}';
     }
 
@@ -126,11 +137,12 @@ public class User extends Params {
                 Objects.equals(getEmail(), user.getEmail()) &&
                 Objects.equals(getPassword(), user.getPassword()) &&
                 Objects.equals(getLastName(), user.getLastName()) &&
-                Objects.equals(getFirstName(), user.getFirstName());
+                Objects.equals(getFirstName(), user.getFirstName()) &&
+                Objects.equals(getUpdateDate(), user.getUpdateDate());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getEmail(), getPassword(), getLastName(), getFirstName());
+        return Objects.hash(getId(), getEmail(), getPassword(), getLastName(), getFirstName(), getUpdateDate());
     }
 }

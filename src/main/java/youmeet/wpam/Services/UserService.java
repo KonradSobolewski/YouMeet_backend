@@ -89,6 +89,10 @@ public class UserService implements UserDetailsService {
                     if (dto.hasParam(PHOTO)) {
                         put(PHOTO, dto.getStringParam(PHOTO, null));
                     }
+                    if (dto.hasParam(AGE))
+                        put(AGE, dto.getParam(AGE));
+                    if (dto.hasParam(GENDER))
+                        put(GENDER, dto.getStringParam(GENDER, MALE));
                 }}
         );
 
@@ -160,6 +164,14 @@ public class UserService implements UserDetailsService {
                 if(dto.hasParam(PHOTO)) {
                     u.addParam(PHOTO, dto.getStringParam(PHOTO,""));
                 }
+                if(dto.hasParam(AGE))
+                    u.addParam(AGE, dto.getParam(AGE));
+
+                if(dto.hasParam(GENDER))
+                    u.addParam(GENDER, dto.getStringParam(GENDER, MALE));
+
+                u.setUpdateDate(ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).toString());
+
                 return saveUser(u);
             });
         }
