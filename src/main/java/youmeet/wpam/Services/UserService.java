@@ -91,6 +91,9 @@ public class UserService implements UserDetailsService {
                     }
                     if (dto.hasParam(AGE))
                         put(AGE, dto.getParam(AGE));
+                    else
+                        put(AGE, 18);
+
                     if (dto.hasParam(GENDER))
                         put(GENDER, dto.getStringParam(GENDER, MALE));
                 }}
