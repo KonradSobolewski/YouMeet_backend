@@ -13,5 +13,11 @@ public class UtilsKeys {
     public static final String MALE = "male";
     public static final String FEMALE = "female";
     public static final String AGE = "age";
+    public static final String IS_SUCCESSFUL = "isSuccessful";
     public static final String UPDATE_DATE = "updateDate";
+    public static final String START_DATE = "startDate";
+    public static final String FIRST_NAME = "firstName";
+    public static final String LAST_NAME = "lastName";
+    public static final String INVITED_ONE = "invitedOne";
+    public static final String CATEGORY_NAME = "categoryName";
 }

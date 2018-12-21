@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import youmeet.wpam.DTO.MeetingDTO;
-import youmeet.wpam.Entities.Meeting;
 import youmeet.wpam.Services.MeetingService;
 
 import javax.validation.Valid;
@@ -39,4 +38,17 @@ public class MeetingController {
 
         return ResponseEntity.ok(meetingService.createMeeting(dto));
     }
+
+    @GetMapping(value = "api/getUserMeetingHistory")
+    public ResponseEntity getUserMeetingHistory(@RequestParam(value = "email") String email) {
+        return ResponseEntity.ok(meetingService.getUserMeetingHistory(email));
+    }
+
+    @GetMapping(value = "api/startMeeting")
+    public ResponseEntity startMeeting(@RequestParam(value = "id") Long id) {
+        return meetingService.startMeeting(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(ResponseEntity.badRequest()::build);
+    }
+
 }
