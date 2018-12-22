@@ -56,7 +56,17 @@ public class MeetingService {
     }
 
     public List<Meeting> getMeetings(Long user_id) {
-        return meetingRepository.getMeetings(user_id);
+
+        List<Meeting> meetings = meetingRepository.getMeetings(user_id);
+
+        meetings.forEach( meeting -> {
+            Optional<User> invited = userRepository.findById(meeting.getInviter_id());
+            invited.ifPresent( in -> {
+                meeting.addParam(GENDER, in.getStringParam(GENDER, ""));
+                meeting.addParam(PHOTO, in.getStringParam(PHOTO, null));
+            });
+        });
+        return meetings;
     }
 
 
