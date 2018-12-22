@@ -62,8 +62,12 @@ public class MeetingService {
         meetings.forEach( meeting -> {
             Optional<User> invited = userRepository.findById(meeting.getInviter_id());
             invited.ifPresent( in -> {
-                meeting.addParam(GENDER, in.getStringParam(GENDER, ""));
                 meeting.addParam(PHOTO, in.getStringParam(PHOTO, null));
+                meeting.addParam(FIRST_NAME, in.getFirstName());
+                meeting.addParam(LAST_NAME, in.getLastName());
+                meeting.addParam(GENDER, in.getStringParam(GENDER,""));
+                meeting.addParam(AGE, in.getParam(AGE));
+                meeting.addParam(EMAIL, in.getEmail());
             });
         });
         return meetings;
