@@ -86,9 +86,9 @@ public class UserService implements UserDetailsService {
         user.setParams(
                 new HashMap<String, Object>() {{
                     put(CREATION_DATE, ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).toString());
-                    if (dto.hasParam(PHOTO)) {
+                    if (dto.hasParam(PHOTO))
                         put(PHOTO, dto.getStringParam(PHOTO, null));
-                    }
+
                     if (dto.hasParam(AGE))
                         put(AGE, dto.getParam(AGE));
                     else
@@ -96,6 +96,11 @@ public class UserService implements UserDetailsService {
 
                     if (dto.hasParam(GENDER))
                         put(GENDER, dto.getStringParam(GENDER, MALE));
+
+                    if(dto.hasParam(ACCOUNT_TYPE))
+                        put(ACCOUNT_TYPE, dto.getParam(ACCOUNT_TYPE));
+                    else
+                        put(ACCOUNT_TYPE, PERSONAL_ACCOUNT);
                 }}
         );
 

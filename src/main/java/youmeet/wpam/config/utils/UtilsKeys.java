@@ -13,6 +13,8 @@ public class UtilsKeys {
     public static final String MALE = "male";
     public static final String FEMALE = "female";
     public static final String AGE = "age";
+    public static final String ACCOUNT_TYPE = "account";
+    public static final String PERSONAL_ACCOUNT = "personal";
     public static final String IS_SUCCESSFUL = "isSuccessful";
     public static final String UPDATE_DATE = "updateDate";
     public static final String START_DATE = "startDate";
