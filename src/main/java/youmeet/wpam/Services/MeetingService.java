@@ -3,7 +3,6 @@ package youmeet.wpam.Services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import youmeet.wpam.DTO.MeetingDTO;
-import youmeet.wpam.Entities.Category;
 import youmeet.wpam.Entities.Meeting;
 import youmeet.wpam.Entities.User;
 import youmeet.wpam.Repository.CategoryRepository;
@@ -70,7 +69,6 @@ public class MeetingService {
         });
     }
 
-
     public List<Meeting> getUserMeetingHistory(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         if(!user.isPresent())
@@ -85,6 +83,7 @@ public class MeetingService {
             invited.ifPresent( in -> {
                 meeting.addParam(FIRST_NAME, in.getFirstName());
                 meeting.addParam(LAST_NAME, in.getLastName());
+                meeting.addParam(GENDER, in.getStringParam(GENDER,""));
                 meeting.addParam(AGE, in.getParam(AGE));
                 meeting.addParam(PHOTO, in.getStringParam(PHOTO, null));
             });
