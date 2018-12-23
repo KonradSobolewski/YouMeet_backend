@@ -8,6 +8,7 @@ import youmeet.wpam.Entities.User;
 import youmeet.wpam.Repository.CategoryRepository;
 import youmeet.wpam.Repository.MeetingRepository;
 import youmeet.wpam.Repository.UserRepository;
+import youmeet.wpam.config.utils.functionService;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -80,6 +81,24 @@ public class MeetingService {
             m.addParam(START_DATE, ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).toString());
             m.addParam(IS_SUCCESSFUL, true);
             return meetingRepository.save(m);
+        });
+    }
+
+    public Optional<Meeting> joinMeeting(Long id, Long joinerId) {
+        Optional<Meeting> meeting = meetingRepository.findById(id);
+        if(!meeting.isPresent())
+            return Optional.empty();
+        return meeting.map(m -> {
+                if(!m.hasParam(JOINER_ID))
+                    m.addParam(JOINER_ID, new ArrayList<>(Arrays.asList(joinerId)));
+                else if(m.hasParam(JOINER_ID) && m.getIs_one_to_one() == true)
+                    return m;
+                else {
+                    List<Integer> existingJoiners = functionService.getIntegerArray(m.getParam(JOINER_ID));
+                    existingJoiners.add(joinerId.intValue());
+                    m.addParam(JOINER_ID, existingJoiners);
+                }
+                return meetingRepository.save(m);
         });
     }
 

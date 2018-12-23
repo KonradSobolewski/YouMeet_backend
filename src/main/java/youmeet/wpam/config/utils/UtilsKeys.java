@@ -18,6 +18,7 @@ public class UtilsKeys {
     public static final String IS_SUCCESSFUL = "isSuccessful";
     public static final String UPDATE_DATE = "updateDate";
     public static final String START_DATE = "startDate";
+    public static final String JOINER_ID = "joinerId";
     public static final String FIRST_NAME = "firstName";
     public static final String LAST_NAME = "lastName";
     public static final String INVITED_ONE = "invitedOne";

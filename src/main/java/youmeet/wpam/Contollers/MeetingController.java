@@ -51,4 +51,13 @@ public class MeetingController {
                 .orElseGet(ResponseEntity.badRequest()::build);
     }
 
+    @GetMapping(value = "api/joinMeeting")
+    public ResponseEntity joinMeeting(@RequestParam(value = "id") Long id,
+                                      @RequestParam(value = "joiner_id") Long joinerId) {
+        return meetingService.joinMeeting(id, joinerId).
+               map(ResponseEntity::ok).
+               orElseGet(ResponseEntity.badRequest()::build) ;
+    }
+
+
 }
