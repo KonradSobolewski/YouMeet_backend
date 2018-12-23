@@ -59,5 +59,10 @@ public class MeetingController {
                orElseGet(ResponseEntity.badRequest()::build) ;
     }
 
+    @GetMapping(value = "api/cancelMeeting")
+    public ResponseEntity cancelMeeting(@RequestParam(value="id") Long id) {
+        return ResponseEntity.ok(meetingService.cancelMeeting(id));
+    }
+
 
 }

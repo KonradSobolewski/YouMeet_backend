@@ -17,4 +17,6 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
             "params->>'isSuccessful' = 'true' " +
             "ORDER BY to_timestamp(params->>'startDate', 'yyyy-MM-dd HH24:MI:SS') DESC",nativeQuery = true)
     List<Meeting> findAllByInviterId(Long id);
+
+
 }

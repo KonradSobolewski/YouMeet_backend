@@ -1,6 +1,7 @@
 package youmeet.wpam.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import youmeet.wpam.DTO.MeetingDTO;
 import youmeet.wpam.Entities.Meeting;
@@ -84,6 +85,15 @@ public class MeetingService {
         });
     }
 
+    public HttpStatus cancelMeeting(Long id) {
+        Optional<Meeting> meeting = meetingRepository.findById(id);
+        if(meeting.isPresent()) {
+            meetingRepository.delete(meeting.get());
+            return HttpStatus.OK;
+        }
+        return HttpStatus.BAD_REQUEST;
+    }
+
     public Optional<Meeting> joinMeeting(Long id, Long joinerId) {
         Optional<Meeting> meeting = meetingRepository.findById(id);
         if(!meeting.isPresent())
@@ -101,6 +111,7 @@ public class MeetingService {
                 return meetingRepository.save(m);
         });
     }
+
 
     public List<Meeting> getUserMeetingHistory(String email) {
         Optional<User> user = userRepository.findByEmail(email);
