@@ -30,6 +30,9 @@ public class MeetingService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private UserService userService;
+
     @Transactional
     public Meeting saveMeeting(Meeting meeting) {
         return meetingRepository.save(meeting);
@@ -55,22 +58,25 @@ public class MeetingService {
         return saveMeeting(meeting);
     }
 
-    public List<Meeting> getMeetings(Long user_id) {
+    public List<Meeting> getMeetings(Long user_id, Long minAge, Long maxAge, String gender) {
 
         List<Meeting> meetings = meetingRepository.getMeetings(user_id);
-
+        List<Meeting> meetingToSend = new ArrayList<>();
         meetings.forEach( meeting -> {
             Optional<User> invited = userRepository.findById(meeting.getInviter_id());
             invited.ifPresent( in -> {
-                meeting.addParam(PHOTO, in.getStringParam(PHOTO, null));
-                meeting.addParam(FIRST_NAME, in.getFirstName());
-                meeting.addParam(LAST_NAME, in.getLastName());
-                meeting.addParam(GENDER, in.getStringParam(GENDER,""));
-                meeting.addParam(AGE, in.getParam(AGE));
-                meeting.addParam(EMAIL, in.getEmail());
+                if (userService.checkPeronalInformations(in ,minAge, maxAge, gender)){
+                    meeting.addParam(PHOTO, in.getStringParam(PHOTO, null));
+                    meeting.addParam(FIRST_NAME, in.getFirstName());
+                    meeting.addParam(LAST_NAME, in.getLastName());
+                    meeting.addParam(GENDER, in.getStringParam(GENDER,""));
+                    meeting.addParam(AGE, in.getParam(AGE));
+                    meeting.addParam(EMAIL, in.getEmail());
+                    meetingToSend.add(meeting);
+                }
             });
         });
-        return meetings;
+        return meetingToSend;
     }
 
 
