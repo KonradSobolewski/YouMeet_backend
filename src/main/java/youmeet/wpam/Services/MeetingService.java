@@ -108,10 +108,20 @@ public class MeetingService {
                     existingJoiners.add(joinerId.intValue());
                     m.addParam(JOINER_ID, existingJoiners);
                 }
+                m.addParam(NEW_JOINER, true);
                 return meetingRepository.save(m);
         });
     }
 
+    public List<Meeting> getUserSubscripedToMeetings(Long id) {
+        List<Meeting> meetings = meetingRepository.getAllMeetingsWithSubscribers();
+        return meetings.stream().filter(m -> functionService.getIntegerArray(m.getParam(JOINER_ID)).contains(id.intValue())).collect(Collectors.toList());
+    }
+
+    public List<Meeting> getMeetingsWithNewJoiners(Long id) {
+        List<Meeting> meetings = meetingRepository.getAllMeetingsForInviter(id);
+        return meetings.stream().filter(m -> (Boolean)m.getParam(NEW_JOINER) == true).collect(Collectors.toList());
+    }
 
     public List<Meeting> getUserMeetingHistory(String email) {
         Optional<User> user = userRepository.findByEmail(email);

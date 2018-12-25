@@ -64,5 +64,14 @@ public class MeetingController {
         return ResponseEntity.ok(meetingService.cancelMeeting(id));
     }
 
+    @GetMapping(value = "api/getMeetingWithSubscribers")
+    public ResponseEntity getUserSubscripedToMeetings(@RequestParam(value="id") Long id) {
+        return ResponseEntity.ok(meetingService.getUserSubscripedToMeetings(id));
+    }
+
+    @GetMapping(value = "api/getMeetingsWithNewJoiners")
+    public ResponseEntity getMeetingsWithNewJoiners(@RequestParam(value="id") Long id) {
+        return ResponseEntity.ok(meetingService.getMeetingsWithNewJoiners(id));
+    }
 
 }
