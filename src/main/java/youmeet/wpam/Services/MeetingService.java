@@ -120,7 +120,29 @@ public class MeetingService {
 
     public List<Meeting> getMeetingsWithNewJoiners(Long id) {
         List<Meeting> meetings = meetingRepository.getAllMeetingsForInviter(id);
-        return meetings.stream().filter(m -> (Boolean)m.getParam(NEW_JOINER) == true).collect(Collectors.toList());
+        return meetings.stream().filter(m -> !functionService.getIntegerArray(m.getParam(NEW_JOINER)).isEmpty()).collect(Collectors.toList());
+    }
+
+    public Optional<Meeting> acceptNewJoinerInMeeting(Long id, Long newJoinerId) {
+        Optional<Meeting> meeting = meetingRepository.findById(id);
+        if(!meeting.isPresent())
+            return Optional.empty();
+        meeting.filter(m-> m.hasParam(JOINER_ID) && functionService.getIntegerArray(m.getParam(JOINER_ID)).contains(new Integer(newJoinerId.intValue())))
+                .map(m -> {
+                List<Integer> newJoinersList = functionService.getIntegerArray(m.getParam(JOINER_ID));
+                newJoinersList.remove(new Integer(newJoinerId.intValue()));
+                m.addParam(JOINER_ID, newJoinersList);
+                if(m.hasParam(ACCEPTED_JOINER)) {
+                    List<Integer> acceptedJoinersList = functionService.getIntegerArray(m.getParam(ACCEPTED_JOINER));
+                    acceptedJoinersList.add(newJoinerId.intValue());
+                    m.addParam(ACCEPTED_JOINER, acceptedJoinersList);
+                }
+                else
+                    m.addParam(ACCEPTED_JOINER, new ArrayList<>(Arrays.asList(newJoinerId.intValue())));
+                return m;
+        });
+        meetingRepository.save(meeting.get());
+        return meeting;
     }
 
     public List<Meeting> getUserMeetingHistory(String email) {

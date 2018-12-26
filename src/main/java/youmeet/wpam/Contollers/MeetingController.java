@@ -74,4 +74,10 @@ public class MeetingController {
         return ResponseEntity.ok(meetingService.getMeetingsWithNewJoiners(id));
     }
 
+    @GetMapping(value = "api/acceptNewJoinerInMeeting")
+    public ResponseEntity getMeetingsWithNewJoiners(@RequestParam(value="id") Long id,
+                                                    @RequestParam(value="newJoinerId") Long newJoinerId) {
+        return ResponseEntity.ok(meetingService.acceptNewJoinerInMeeting(id, newJoinerId));
+    }
+
 }
