@@ -115,12 +115,26 @@ public class MeetingService {
 
     public List<Meeting> getUserSubscripedToMeetings(Long id) {
         List<Meeting> meetings = meetingRepository.getAllMeetingsWithSubscribers();
-        return meetings.stream().filter(m -> functionService.getIntegerArray(m.getParam(JOINER_ID)).contains(id.intValue())).collect(Collectors.toList());
+        meetings.forEach(meeting -> {
+            Optional<User> inviterOpt = userRepository.findById(meeting.getInviter_id());
+            inviterOpt.ifPresent( inviter -> {
+                fillMeetingWithInviterInfo(meeting, inviter);
+            });
+
+            categoryRepository.findById(meeting.getCategory()).ifPresent(c -> {
+                meeting.addParam(CATEGORY_NAME, c.getType());
+            });
+        });
+        return meetings.stream()
+               .filter(m ->
+               functionService.getIntegerArray(m.getParam(JOINER_ID)).contains(id.intValue()) ||
+               functionService.getIntegerArray(m.getParam(ACCEPTED_JOINER)).contains(id.intValue())        )
+               .collect(Collectors.toList());
     }
 
     public List<Meeting> getMeetingsWithNewJoiners(Long id) {
         List<Meeting> meetings = meetingRepository.getAllMeetingsForInviter(id);
-        return meetings.stream().filter(m -> !functionService.getIntegerArray(m.getParam(NEW_JOINER)).isEmpty()).collect(Collectors.toList());
+        return meetings.stream().filter(m -> !functionService.getIntegerArray(m.getParam(JOINER_ID)).isEmpty()).collect(Collectors.toList());
     }
 
     public Optional<Meeting> acceptNewJoinerInMeeting(Long id, Long newJoinerId) {
@@ -157,11 +171,7 @@ public class MeetingService {
         meetings.forEach(meeting -> {
             Optional<User> invited = userRepository.findByEmail(meeting.getStringParam(INVITED_ONE, ""));
             invited.ifPresent( in -> {
-                meeting.addParam(FIRST_NAME, in.getFirstName());
-                meeting.addParam(LAST_NAME, in.getLastName());
-                meeting.addParam(GENDER, in.getStringParam(GENDER,""));
-                meeting.addParam(AGE, in.getParam(AGE));
-                meeting.addParam(PHOTO, in.getStringParam(PHOTO, null));
+                fillMeetingWithInviterInfo(meeting, in);
             });
 
             categoryRepository.findById(meeting.getCategory()).ifPresent(c -> {
@@ -170,5 +180,13 @@ public class MeetingService {
         });
 
         return meetings.stream().filter(m -> m.hasParam(FIRST_NAME)).collect(Collectors.toList());
+    }
+
+    private void fillMeetingWithInviterInfo(Meeting meeting, User user) {
+        meeting.addParam(FIRST_NAME, user.getFirstName());
+        meeting.addParam(LAST_NAME, user.getLastName());
+        meeting.addParam(GENDER, user.getStringParam(GENDER,""));
+        meeting.addParam(AGE, user.getParam(AGE));
+        meeting.addParam(PHOTO, user.getStringParam(PHOTO, null));
     }
 }
