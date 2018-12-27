@@ -25,8 +25,11 @@ public class MeetingController {
 
     @Secured(value = {ROLE_ADMIN, ROLE_USER})
     @GetMapping(value = "/api/getMeetings")
-    public ResponseEntity getMeetings(@RequestParam(value = "user_id") Long user_id) {
-        return ResponseEntity.ok(meetingService.getMeetings(user_id));
+    public ResponseEntity getMeetings(@RequestParam(value = "user_id") Long user_id,
+                                      @RequestParam(value = "minAge") Long minAge,
+                                      @RequestParam(value = "maxAge") Long maxAge,
+                                      @RequestParam(value = "gender") String gender) {
+        return ResponseEntity.ok(meetingService.getMeetings(user_id, minAge, maxAge, gender));
 
     }
 

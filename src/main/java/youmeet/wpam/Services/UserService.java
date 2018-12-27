@@ -185,4 +185,17 @@ public class UserService implements UserDetailsService {
         }
         return Optional.empty();
     }
+
+    public boolean checkPeronalInformations(User user, Long minAge, Long maxAge, String gender) {
+        if (!gender.equals(MALE) && !gender.equals(FEMALE)) {
+            return (Integer) user.getParam(AGE) >= minAge &&
+                    (Integer) user.getParam(AGE) <= maxAge;
+        }
+        else {
+            return (Integer) user.getParam(AGE) >= minAge &&
+                    (Integer) user.getParam(AGE) <= maxAge &&
+                    user.getStringParam(GENDER, "").equals(gender);
+        }
+
+    }
 }
