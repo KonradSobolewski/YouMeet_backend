@@ -27,4 +27,7 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
     @Query(value = "SELECT * FROM meeting WHERE params->>'joinerId' is not null AND inviter_id = ?1", nativeQuery = true)
     List<Meeting> getAllMeetingsForInviter(Long id);
 
+    @Query(value = "SELECT COUNT(*) FROM meeting WHERE inviter_id = ?1 and params->>'isSuccessful' is null"
+            ,nativeQuery = true)
+    Long countActiveMeetings(Long id);
 }

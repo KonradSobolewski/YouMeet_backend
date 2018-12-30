@@ -28,4 +28,5 @@ public class UtilsKeys {
     public static final String EMAIL = "email";
     public static final String PICKED_TIME = "pickedTime";
     public static final String COMMON_HOBBIES = "commonHobbies";
+    public static final String MEETING_COUNTER = "meetingCounter";
 }

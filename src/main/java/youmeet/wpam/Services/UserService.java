@@ -13,6 +13,7 @@ import youmeet.wpam.Entities.Role;
 import youmeet.wpam.Entities.User;
 import youmeet.wpam.Entities.UserHobby;
 import youmeet.wpam.Entities.UserSecured;
+import youmeet.wpam.Repository.MeetingRepository;
 import youmeet.wpam.Repository.UserRepository;
 import youmeet.wpam.config.JWTConfig.TokenAuthenticationService;
 import youmeet.wpam.exceptions.UserNotFoundException;
@@ -42,13 +43,19 @@ public class UserService implements UserDetailsService {
     @Autowired
     private UserHobbiesService userHobbiesService;
 
+    @Autowired
+    private MeetingRepository meetingRepository;
+
 
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
     public User getUserById(Long id) throws UserNotFoundException {
-        return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        return userRepository.findById(id).map(u -> {
+            u.addParam(MEETING_COUNTER, meetingRepository.countActiveMeetings(u.getId()));
+            return u;
+        }).orElseThrow(UserNotFoundException::new);
     }
 
     public User getUserByEmail(String email) throws UserNotFoundException {
@@ -97,7 +104,7 @@ public class UserService implements UserDetailsService {
                     if (dto.hasParam(GENDER))
                         put(GENDER, dto.getStringParam(GENDER, MALE));
 
-                    if(dto.hasParam(ACCOUNT_TYPE))
+                    if (dto.hasParam(ACCOUNT_TYPE))
                         put(ACCOUNT_TYPE, dto.getParam(ACCOUNT_TYPE));
                     else
                         put(ACCOUNT_TYPE, PERSONAL_ACCOUNT);
@@ -113,7 +120,7 @@ public class UserService implements UserDetailsService {
 
         UserHobby userHobby = new UserHobby();
         userHobby.setUser_id(user.getId());
-        userHobby.setParams(new HashMap<String, Object>(){{
+        userHobby.setParams(new HashMap<String, Object>() {{
             put(HOBBIES, Collections.EMPTY_LIST);
         }});
         userHobbiesService.saveUserHobby(userHobby);
@@ -133,7 +140,7 @@ public class UserService implements UserDetailsService {
     }
 
     public String createTokenForUser(String email) throws UserNotFoundException {
-        if (userRepository.existsByEmail(email)){
+        if (userRepository.existsByEmail(email)) {
             String token = TokenAuthenticationService.generateAuthentication(email);
             Authentication authentication = TokenAuthenticationService
                     .getAuthenticationForFb(token);
@@ -141,41 +148,43 @@ public class UserService implements UserDetailsService {
             SecurityContextHolder.getContext()
                     .setAuthentication(authentication);
             return token;
-        }
-        else
+        } else
             throw new UserNotFoundException("Username not found");
     }
 
     public User createFbUserAccount(UserSmallDTO dto) {
         Optional<User> user = userRepository.findByEmail(dto.getEmail());
+        user.ifPresent(u -> {
+            u.addParam(MEETING_COUNTER, meetingRepository.countActiveMeetings(u.getId()));
+        });
         return user.orElseGet(() -> createUserBody(dto));
     }
 
     @Transactional
     public Optional<User> updateUser(UserSmallDTO dto) {
-        if(dto.getEmail() != null) {
+        if (dto.getEmail() != null) {
             Optional<User> user = userRepository.findByEmail(dto.getEmail());
-            return user.map( u -> {
-                if(dto.getFirstName() != null) {
+            return user.map(u -> {
+                if (dto.getFirstName() != null) {
                     u.setFirstName(dto.getFirstName());
                 }
-                if(dto.getLastName() != null) {
+                if (dto.getLastName() != null) {
                     u.setLastName(dto.getLastName());
                 }
-                if(dto.getPassword() != null) {
+                if (dto.getPassword() != null) {
                     u.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
                 }
-                if(dto.hasParam(HOBBIES)) {
+                if (dto.hasParam(HOBBIES)) {
                     List<String> actualHobbies = getStringArray(dto.getParam(HOBBIES));
                     userHobbiesService.addNewHobbiesToUser(u, actualHobbies);
                 }
-                if(dto.hasParam(PHOTO)) {
-                    u.addParam(PHOTO, dto.getStringParam(PHOTO,""));
+                if (dto.hasParam(PHOTO)) {
+                    u.addParam(PHOTO, dto.getStringParam(PHOTO, ""));
                 }
-                if(dto.hasParam(AGE))
+                if (dto.hasParam(AGE))
                     u.addParam(AGE, dto.getParam(AGE));
 
-                if(dto.hasParam(GENDER))
+                if (dto.hasParam(GENDER))
                     u.addParam(GENDER, dto.getStringParam(GENDER, MALE));
 
                 u.setUpdateDate(ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).toString());
@@ -190,8 +199,7 @@ public class UserService implements UserDetailsService {
         if (!gender.equals(MALE) && !gender.equals(FEMALE)) {
             return (Integer) user.getParam(AGE) >= minAge &&
                     (Integer) user.getParam(AGE) <= maxAge;
-        }
-        else {
+        } else {
             return (Integer) user.getParam(AGE) >= minAge &&
                     (Integer) user.getParam(AGE) <= maxAge &&
                     user.getStringParam(GENDER, "").equals(gender);
