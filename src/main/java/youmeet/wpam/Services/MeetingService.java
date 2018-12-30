@@ -116,11 +116,17 @@ public class MeetingService {
         return meetingToSend;
     }
 
-    public List<Meeting> getRecentUserMeetings(Long id) {
-        List<Meeting> meetings = meetingRepository.getRecentMeetings(id);
+    public List<Meeting> getRecentUserMeetings(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+
+        if(!user.isPresent()) {
+            return Collections.emptyList();
+        }
+
+        List<Meeting> meetings = meetingRepository.getRecentMeetings(user.get().getId());
         deleteExpiredMeetings(meetings);
 
-        return meetingRepository.getRecentMeetings(id);
+        return meetingRepository.getRecentMeetings(user.get().getId());
     }
 
     public Optional<Meeting> startMeeting(Long id) {

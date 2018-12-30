@@ -52,8 +52,8 @@ public class MeetingController {
 
     @Secured(value = {ROLE_ADMIN, ROLE_USER})
     @GetMapping(value = "/api/getRecentMeetings")
-    public ResponseEntity getRecentUserMeetings(@RequestParam(value = "user_id") Long user_id) {
-        return ResponseEntity.ok(meetingService.getRecentUserMeetings(user_id));
+    public ResponseEntity getRecentUserMeetings(@RequestParam(value = "email") String email) {
+        return ResponseEntity.ok(meetingService.getRecentUserMeetings(email));
 
     }
 
