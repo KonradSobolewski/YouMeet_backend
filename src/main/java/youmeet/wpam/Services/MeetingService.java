@@ -13,6 +13,7 @@ import youmeet.wpam.config.utils.functionService;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -40,6 +41,29 @@ public class MeetingService {
         return meetingRepository.save(meeting);
     }
 
+    public void deleteExpiredMeetings(List<Meeting> meetings) {
+        List<Meeting> filteredMeetings = meetings
+                .stream()
+                .filter(m-> !m.hasParam(ACCEPTED_JOINER) && isMeetingExpired(m))
+                .collect(Collectors.toList());
+
+        filteredMeetings.forEach(m-> meetingRepository.deleteById(m.getMeeting_id()));
+    }
+
+    private boolean isMeetingExpired(Meeting meeting) {
+        if (meeting.hasParam(PICKED_TIME)) {
+            String pickedTime = meeting.getStringParam(PICKED_TIME,"");
+            ZonedDateTime now = ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC);
+            ZonedDateTime meetingTime = now.with(
+                    LocalTime.of(
+                            Integer.parseInt(pickedTime.substring(0,2)),
+                            Integer.parseInt(pickedTime.substring(3))
+                    )
+            );
+            return meetingTime.isBefore(now);
+        }
+        return true;
+    }
 
     public Meeting createMeeting(MeetingDTO dto) {
         Meeting meeting = new Meeting();
@@ -64,6 +88,10 @@ public class MeetingService {
     public List<Meeting> getMeetings(Long user_id, Long minAge, Long maxAge, String gender) {
 
         List<Meeting> meetings = meetingRepository.getMeetings(user_id);
+        deleteExpiredMeetings(meetings);
+
+        meetings = meetingRepository.getMeetings(user_id);
+
         List<Meeting> meetingToSend = new ArrayList<>();
         meetings.forEach( meeting -> {
             Optional<User> invited = userRepository.findById(meeting.getInviter_id());
@@ -172,6 +200,10 @@ public class MeetingService {
             return Collections.emptyList();
 
         List<Meeting> meetings = meetingRepository.findAllByInviterId(user.get().getId());
+        deleteExpiredMeetings(meetings);
+
+        meetings = meetingRepository.findAllByInviterId(user.get().getId());
+
         if(meetings.isEmpty())
             return Collections.emptyList();
 
