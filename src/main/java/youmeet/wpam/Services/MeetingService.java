@@ -56,6 +56,7 @@ public class MeetingService {
             meeting.addParam(PLACE_DESCRIPTION, dto.getPlaceDescription());
 
         meeting.addParam(CREATION_DATE, ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).toString());
+        meeting.addParam(PICKED_TIME, dto.getPickedTime());
 
         return saveMeeting(meeting);
     }

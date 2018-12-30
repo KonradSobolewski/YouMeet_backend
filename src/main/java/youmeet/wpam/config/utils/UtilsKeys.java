@@ -26,4 +26,5 @@ public class UtilsKeys {
     public static final String INVITED_ONE = "invitedOne";
     public static final String CATEGORY_NAME = "categoryName";
     public static final String EMAIL = "email";
+    public static final String PICKED_TIME = "pickedTime";
 }

@@ -21,6 +21,9 @@ public class MeetingDTO  {
     @NotNull
     private Long category;
 
+    @NotNull
+    private String pickedTime;
+
     private String description;
 
     private String placeDescription;
@@ -87,5 +90,13 @@ public class MeetingDTO  {
 
     public void setPlaceDescription(String placeDescription) {
         this.placeDescription = placeDescription;
+    }
+
+    public String getPickedTime() {
+        return pickedTime;
+    }
+
+    public void setPickedTime(String pickedTime) {
+        this.pickedTime = pickedTime;
     }
 }
