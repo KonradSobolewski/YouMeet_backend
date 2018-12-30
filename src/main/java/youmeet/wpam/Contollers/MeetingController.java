@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import youmeet.wpam.DTO.MeetingDTO;
+import youmeet.wpam.DTO.ModifyMeetingDTO;
 import youmeet.wpam.Services.MeetingService;
 
 import javax.validation.Valid;
@@ -30,6 +31,29 @@ public class MeetingController {
                                       @RequestParam(value = "maxAge") Long maxAge,
                                       @RequestParam(value = "gender") String gender) {
         return ResponseEntity.ok(meetingService.getMeetings(user_id, minAge, maxAge, gender));
+
+    }
+
+    @Secured(value = {ROLE_ADMIN, ROLE_USER})
+    @GetMapping(value = "/api/deleteMeeting")
+    public ResponseEntity deleteMeeting(@RequestParam(value = "id") Long id) {
+        meetingService.deleteMeetingById(id);
+        return ResponseEntity.ok(HttpStatus.OK);
+
+    }
+
+    @Secured(value = {ROLE_ADMIN, ROLE_USER})
+    @PostMapping(value = "/api/modifyMeeting")
+    public ResponseEntity modifyMeeting(@Valid @RequestBody ModifyMeetingDTO dto) {
+        meetingService.modifyMeeting(dto);
+        return ResponseEntity.ok(HttpStatus.OK);
+
+    }
+
+    @Secured(value = {ROLE_ADMIN, ROLE_USER})
+    @GetMapping(value = "/api/getRecentMeetings")
+    public ResponseEntity getRecentUserMeetings(@RequestParam(value = "user_id") Long user_id) {
+        return ResponseEntity.ok(meetingService.getRecentUserMeetings(user_id));
 
     }
 

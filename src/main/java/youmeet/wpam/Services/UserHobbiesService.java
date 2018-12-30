@@ -9,8 +9,7 @@ import youmeet.wpam.Repository.HobbyRepository;
 import youmeet.wpam.Repository.UserHobbiesRepository;
 import youmeet.wpam.Repository.UserRepository;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static youmeet.wpam.config.utils.UtilsKeys.*;
@@ -62,5 +61,25 @@ public class UserHobbiesService {
             userHobby.addParam(HOBBIES, hobbiesById);
             userHobbiesRepository.save(userHobby);
         });
+    }
+
+    public List<String> getCommonHobbies(User in, Long user_id) {
+        Optional<UserHobby> invitedOneHobbies = userHobbiesRepository.getByUserId(in.getId());
+        Optional<UserHobby> userHobbies = userHobbiesRepository.getByUserId(user_id);
+
+        if (!userHobbies.isPresent() || !invitedOneHobbies.isPresent())
+            return Collections.emptyList();
+
+        List<Integer> hobbies = getIntegerArray(userHobbies.get().getParam(HOBBIES));
+        List<Integer> invitesHobbies = getIntegerArray(invitedOneHobbies.get().getParam(HOBBIES));
+
+        List<String> commonHobbies = new ArrayList<>();
+        hobbies.forEach(hobby -> {
+            if(invitesHobbies.contains(hobby)){
+                commonHobbies.add(hobbyRepository.findById(hobby).getName());
+            }
+        });
+
+        return commonHobbies;
     }
 }

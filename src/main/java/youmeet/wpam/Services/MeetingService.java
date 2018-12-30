@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import youmeet.wpam.DTO.MeetingDTO;
+import youmeet.wpam.DTO.ModifyMeetingDTO;
 import youmeet.wpam.Entities.Meeting;
 import youmeet.wpam.Entities.User;
 import youmeet.wpam.Repository.CategoryRepository;
@@ -35,6 +36,9 @@ public class MeetingService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserHobbiesService userHobbiesService;
 
     @Transactional
     public Meeting saveMeeting(Meeting meeting) {
@@ -96,13 +100,15 @@ public class MeetingService {
         meetings.forEach( meeting -> {
             Optional<User> invited = userRepository.findById(meeting.getInviter_id());
             invited.ifPresent( in -> {
-                if (userService.checkPeronalInformations(in ,minAge, maxAge, gender)){
+                List<String> commonHobbies = userHobbiesService.getCommonHobbies(in, user_id);
+                if (userService.checkPeronalInformations(in ,minAge, maxAge, gender) && !commonHobbies.isEmpty()){
                     meeting.addParam(PHOTO, in.getStringParam(PHOTO, null));
                     meeting.addParam(FIRST_NAME, in.getFirstName());
                     meeting.addParam(LAST_NAME, in.getLastName());
                     meeting.addParam(GENDER, in.getStringParam(GENDER,""));
                     meeting.addParam(AGE, in.getParam(AGE));
                     meeting.addParam(EMAIL, in.getEmail());
+                    meeting.addParam(COMMON_HOBBIES, commonHobbies);
                     meetingToSend.add(meeting);
                 }
             });
@@ -110,6 +116,12 @@ public class MeetingService {
         return meetingToSend;
     }
 
+    public List<Meeting> getRecentUserMeetings(Long id) {
+        List<Meeting> meetings = meetingRepository.getRecentMeetings(id);
+        deleteExpiredMeetings(meetings);
+
+        return meetingRepository.getRecentMeetings(id);
+    }
 
     public Optional<Meeting> startMeeting(Long id) {
         Optional<Meeting> meeting = meetingRepository.findById(id);
@@ -227,5 +239,26 @@ public class MeetingService {
         meeting.addParam(GENDER, user.getStringParam(GENDER,""));
         meeting.addParam(AGE, user.getParam(AGE));
         meeting.addParam(PHOTO, user.getStringParam(PHOTO, null));
+    }
+
+    public void deleteMeetingById(Long id) {
+        meetingRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void modifyMeeting(ModifyMeetingDTO dto) {
+        Optional<Meeting> meeting = meetingRepository.findById(dto.getMeeting_id());
+        meeting.ifPresent(m-> {
+            if(dto.getIs_one_to_one() != null)
+                m.setIs_one_to_one(dto.getIs_one_to_one());
+            if(dto.getCategory()!= null)
+                m.addParam(CATEGORY_NAME,dto.getCategory());
+            if(dto.getDescription() != null) {
+                m.addParam(DESCRIPTION, dto.getDescription());
+            }
+            if(dto.getpickedTime() != null) {
+                m.addParam(PICKED_TIME, dto.getpickedTime());
+            }
+        });
     }
 }
