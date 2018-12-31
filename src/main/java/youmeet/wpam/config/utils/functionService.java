@@ -28,5 +28,16 @@ public class functionService {
         return Collections.emptyList();
     }
 
+    public static List<Long> getLongArray(Object object) {
+        if (object != null) {
+            List<Long> list = new ArrayList<>();
+            for(Object o: (ArrayList<Object>) object){
+                list.add((long)o);
+            }
+            return list;
+        }
+        return Collections.emptyList();
+    }
+
 
 }

@@ -21,6 +21,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static youmeet.wpam.config.utils.UtilsKeys.*;
+import static youmeet.wpam.config.utils.functionService.getIntegerArray;
+import static youmeet.wpam.config.utils.functionService.getLongArray;
 
 @Service
 public class MeetingService {
@@ -129,13 +131,19 @@ public class MeetingService {
         return meetingRepository.getRecentMeetings(user.get().getId());
     }
 
-    public Optional<Meeting> startMeeting(Long id) {
-        Optional<Meeting> meeting = meetingRepository.findById(id);
-        return meeting.map(m -> {
-            m.addParam(START_DATE, ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).toString());
-            m.addParam(IS_SUCCESSFUL, true);
-            return meetingRepository.save(m);
-        });
+    public void startMeeting(Meeting meeting) {
+            if(meeting.hasParam(ACCEPTED_JOINER)) {
+                String pickedTime = meeting.getStringParam(PICKED_TIME, "");
+                ZonedDateTime now = ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC);
+                ZonedDateTime meetingTime = now.with(
+                        LocalTime.of(
+                                Integer.parseInt(pickedTime.substring(0,2)),
+                                Integer.parseInt(pickedTime.substring(3))
+                        )
+                );
+                meeting.addParam(START_DATE, meetingTime.toString());
+                meeting.addParam(IS_SUCCESSFUL, true);
+            }
     }
 
     public HttpStatus cancelMeeting(Long id) {
@@ -157,7 +165,7 @@ public class MeetingService {
                 else if(m.hasParam(JOINER_ID) && m.getIs_one_to_one() == true)
                     return m;
                 else {
-                    List<Integer> existingJoiners = functionService.getIntegerArray(m.getParam(JOINER_ID));
+                    List<Integer> existingJoiners = getIntegerArray(m.getParam(JOINER_ID));
                     existingJoiners.add(joinerId.intValue());
                     m.addParam(JOINER_ID, existingJoiners);
                 }
@@ -180,34 +188,34 @@ public class MeetingService {
         });
         return meetings.stream()
                .filter(m ->
-               functionService.getIntegerArray(m.getParam(JOINER_ID)).contains(id.intValue()) ||
-               functionService.getIntegerArray(m.getParam(ACCEPTED_JOINER)).contains(id.intValue())        )
+               getIntegerArray(m.getParam(JOINER_ID)).contains(id.intValue()) ||
+               getIntegerArray(m.getParam(ACCEPTED_JOINER)).contains(id.intValue())        )
                .collect(Collectors.toList());
     }
 
     public List<Meeting> getMeetingsWithNewJoiners(Long id) {
         List<Meeting> meetings = meetingRepository.getAllMeetingsForInviter(id);
-        return meetings.stream().filter(m -> !functionService.getIntegerArray(m.getParam(JOINER_ID)).isEmpty()).collect(Collectors.toList());
+        return meetings.stream().filter(m -> !getIntegerArray(m.getParam(JOINER_ID)).isEmpty()).collect(Collectors.toList());
     }
 
     public Optional<Meeting> acceptNewJoinerInMeeting(Long id, Long newJoinerId) {
         Optional<Meeting> meeting = meetingRepository.findById(id);
-        if(!meeting.isPresent())
+        if (!meeting.isPresent())
             return Optional.empty();
-        meeting.filter(m-> m.hasParam(JOINER_ID) && functionService.getIntegerArray(m.getParam(JOINER_ID)).contains(new Integer(newJoinerId.intValue())))
+        meeting.filter(m -> m.hasParam(JOINER_ID) && getIntegerArray(m.getParam(JOINER_ID)).contains(new Integer(newJoinerId.intValue())))
                 .map(m -> {
-                List<Integer> newJoinersList = functionService.getIntegerArray(m.getParam(JOINER_ID));
-                newJoinersList.remove(new Integer(newJoinerId.intValue()));
-                m.addParam(JOINER_ID, newJoinersList);
-                if(m.hasParam(ACCEPTED_JOINER)) {
-                    List<Integer> acceptedJoinersList = functionService.getIntegerArray(m.getParam(ACCEPTED_JOINER));
-                    acceptedJoinersList.add(newJoinerId.intValue());
-                    m.addParam(ACCEPTED_JOINER, acceptedJoinersList);
-                }
-                else
-                    m.addParam(ACCEPTED_JOINER, new ArrayList<>(Arrays.asList(newJoinerId.intValue())));
-                return m;
-        });
+                    List<Integer> newJoinersList = getIntegerArray(m.getParam(JOINER_ID));
+                    newJoinersList.remove(new Integer(newJoinerId.intValue()));
+                    m.addParam(JOINER_ID, newJoinersList);
+                    if (m.hasParam(ACCEPTED_JOINER)) {
+                        List<Integer> acceptedJoinersList = getIntegerArray(m.getParam(ACCEPTED_JOINER));
+                        acceptedJoinersList.add(newJoinerId.intValue());
+                        m.addParam(ACCEPTED_JOINER, acceptedJoinersList);
+                    } else
+                        m.addParam(ACCEPTED_JOINER, new ArrayList<>(Arrays.asList(newJoinerId.intValue())));
+                    startMeeting(m);
+                    return m;
+                });
         meetingRepository.save(meeting.get());
         return meeting;
     }
@@ -218,18 +226,27 @@ public class MeetingService {
             return Collections.emptyList();
 
         List<Meeting> meetings = meetingRepository.findAllByInviterId(user.get().getId());
-        deleteExpiredMeetings(meetings);
-
-        meetings = meetingRepository.findAllByInviterId(user.get().getId());
 
         if(meetings.isEmpty())
             return Collections.emptyList();
 
         meetings.forEach(meeting -> {
-            Optional<User> invited = userRepository.findByEmail(meeting.getStringParam(INVITED_ONE, ""));
-            invited.ifPresent( in -> {
-                fillMeetingWithInviterInfo(meeting, in);
-            });
+            if(meeting.getInviter_id().equals(user.get().getId())) {
+                List<Integer> acceptedJoiners = getIntegerArray(meeting.getParam(ACCEPTED_JOINER));
+                if (!acceptedJoiners.isEmpty()) {
+                    Long id = new Long(acceptedJoiners.get(0));
+                    Optional<User> invited = userRepository.findById(id);
+                    invited.ifPresent( in -> {
+                        fillMeetingWithInviterInfo(meeting, in);
+                    });
+                }
+                //TODO jak w accepted joiner jest wiecej niz 1
+            } else {
+                Optional<User> invited = userRepository.findById(meeting.getInviter_id());
+                invited.ifPresent( in -> {
+                    fillMeetingWithInviterInfo(meeting, in);
+                });
+            }
 
             categoryRepository.findById(meeting.getCategory()).ifPresent(c -> {
                 meeting.addParam(CATEGORY_NAME, c.getType());

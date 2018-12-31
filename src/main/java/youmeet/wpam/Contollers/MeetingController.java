@@ -71,13 +71,6 @@ public class MeetingController {
         return ResponseEntity.ok(meetingService.getUserMeetingHistory(email));
     }
 
-    @GetMapping(value = "api/startMeeting")
-    public ResponseEntity startMeeting(@RequestParam(value = "id") Long id) {
-        return meetingService.startMeeting(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(ResponseEntity.badRequest()::build);
-    }
-
     @GetMapping(value = "api/joinMeeting")
     public ResponseEntity joinMeeting(@RequestParam(value = "id") Long id,
                                       @RequestParam(value = "joiner_id") Long joinerId) {
