@@ -128,7 +128,12 @@ public class MeetingService {
         List<Meeting> meetings = meetingRepository.getRecentMeetings(user.get().getId());
         deleteExpiredMeetings(meetings);
 
-        return meetingRepository.getRecentMeetings(user.get().getId());
+        return meetingRepository.getRecentMeetings(user.get().getId()).stream().map(meeting -> {
+            categoryRepository.findById(meeting.getCategory()).ifPresent(c -> {
+                meeting.addParam(CATEGORY_NAME, c.getType());
+            });
+            return meeting;
+        }).collect(Collectors.toList());
     }
 
     public void startMeeting(Meeting meeting) {
