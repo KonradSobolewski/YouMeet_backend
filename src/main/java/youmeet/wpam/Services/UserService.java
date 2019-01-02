@@ -108,6 +108,8 @@ public class UserService implements UserDetailsService {
                         put(ACCOUNT_TYPE, dto.getParam(ACCOUNT_TYPE));
                     else
                         put(ACCOUNT_TYPE, PERSONAL_ACCOUNT);
+
+                    put(FIRST_TIME_LOGGING, true);
                 }}
         );
 
@@ -186,6 +188,9 @@ public class UserService implements UserDetailsService {
 
                 if (dto.hasParam(GENDER))
                     u.addParam(GENDER, dto.getStringParam(GENDER, MALE));
+
+                if (dto.hasParam(FIRST_TIME_LOGGING))
+                    u.addParam(FIRST_TIME_LOGGING,false);
 
                 u.setUpdateDate(ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).toString());
 
