@@ -88,6 +88,15 @@ public class MeetingService {
         meeting.addParam(CREATION_DATE, ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).toString());
         meeting.addParam(PICKED_TIME, dto.getPickedTime());
 
+        String pickedTime = dto.getPickedTime();
+        ZonedDateTime now = ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC);
+        meeting.addParam(MEETING_DATE, now.with(
+                LocalTime.of(
+                        Integer.parseInt(pickedTime.substring(0,2)),
+                        Integer.parseInt(pickedTime.substring(3))
+                )
+        ).toString());
+
         return saveMeeting(meeting);
     }
 
@@ -179,7 +188,7 @@ public class MeetingService {
         });
     }
 
-    public List<Meeting> getUserSubscripedToMeetings(Long id) {
+    public List<Meeting> getUserSubscribedToMeetings(Long id) {
         List<Meeting> meetings = meetingRepository.getAllMeetingsWithSubscribers();
         meetings.forEach(meeting -> {
             Optional<User> inviterOpt = userRepository.findById(meeting.getInviter_id());
@@ -198,9 +207,24 @@ public class MeetingService {
                .collect(Collectors.toList());
     }
 
-    public List<Meeting> getMeetingsWithNewJoiners(Long id) {
-        List<Meeting> meetings = meetingRepository.getAllMeetingsForInviter(id);
-        return meetings.stream().filter(m -> !getIntegerArray(m.getParam(JOINER_ID)).isEmpty()).collect(Collectors.toList());
+    public Map<Long, List<User>> getJoinersToOwnMeetings(Long id) {
+        Optional<User> user = userRepository.findById(id);
+
+        if(!user.isPresent()) {
+            return Collections.EMPTY_MAP;
+        }
+        Map<Long, List<User>> joinersToMeeting = new HashMap<>();
+        List<Meeting> meetings = meetingRepository.getRecentMeetings(user.get().getId());
+        meetings.forEach(meeting -> {
+            List<Integer> joinersById = getIntegerArray(meeting.getParam(JOINER_ID));
+            List<User> joiners = new ArrayList<>();
+            joinersById.forEach( joiner -> {
+                Optional<User> j = userRepository.findById(new Long(joiner));
+                j.ifPresent(joiners::add);
+            });
+            joinersToMeeting.put(meeting.getMeeting_id(), joiners);
+        });
+        return joinersToMeeting;
     }
 
     public Optional<Meeting> acceptNewJoinerInMeeting(Long id, Long newJoinerId) {
@@ -287,6 +311,19 @@ public class MeetingService {
             if(dto.getpickedTime() != null) {
                 m.addParam(PICKED_TIME, dto.getpickedTime());
             }
+        });
+    }
+
+    @Transactional
+    public void cancelSubscription(Long id, Long userId) {
+        Optional<Meeting> meeting = meetingRepository.findById(id);
+        meeting.ifPresent( m -> {
+            List<Integer> joiners =  getIntegerArray(m.getParam(JOINER_ID));
+            List<Integer> acceptedJoiner =  getIntegerArray(m.getParam(ACCEPTED_JOINER));
+            joiners = joiners.stream().filter(integer -> integer != userId.intValue()).collect(Collectors.toList());
+            acceptedJoiner = acceptedJoiner.stream().filter(integer -> integer != userId.intValue()).collect(Collectors.toList());
+            m.addParam(JOINER_ID, joiners);
+            m.addParam(ACCEPTED_JOINER, acceptedJoiner);
         });
     }
 }

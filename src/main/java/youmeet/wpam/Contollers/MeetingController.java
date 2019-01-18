@@ -86,18 +86,25 @@ public class MeetingController {
 
     @GetMapping(value = "api/getMeetingWithSubscribers")
     public ResponseEntity getUserSubscripedToMeetings(@RequestParam(value="id") Long id) {
-        return ResponseEntity.ok(meetingService.getUserSubscripedToMeetings(id));
+        return ResponseEntity.ok(meetingService.getUserSubscribedToMeetings(id));
     }
 
-    @GetMapping(value = "api/getMeetingsWithNewJoiners")
-    public ResponseEntity getMeetingsWithNewJoiners(@RequestParam(value="id") Long id) {
-        return ResponseEntity.ok(meetingService.getMeetingsWithNewJoiners(id));
+    @GetMapping(value = "api/getJoinersToOwnMeetings")
+    public ResponseEntity getJoinersToOwnMeetings(@RequestParam(value="id") Long id) {
+        return ResponseEntity.ok(meetingService.getJoinersToOwnMeetings(id));
     }
 
     @GetMapping(value = "api/acceptNewJoinerInMeeting")
     public ResponseEntity getMeetingsWithNewJoiners(@RequestParam(value="id") Long id,
                                                     @RequestParam(value="newJoinerId") Long newJoinerId) {
         return ResponseEntity.ok(meetingService.acceptNewJoinerInMeeting(id, newJoinerId));
+    }
+
+    @GetMapping(value = "api/cancelSubscription")
+    public ResponseEntity cancelSubscription(@RequestParam(value="id") Long id,
+                                                    @RequestParam(value="userId") Long userId) {
+        meetingService.cancelSubscription(id, userId);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
 }

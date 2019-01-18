@@ -21,7 +21,8 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
             "ORDER BY to_timestamp(params->>'startDate', 'yyyy-MM-dd HH24:MI:SS') DESC",nativeQuery = true)
     List<Meeting> findAllByInviterId(Long id);
 
-    @Query(value = "SELECT * FROM meeting WHERE params->>'joinerId' is not null", nativeQuery = true)
+    @Query(value = "SELECT * FROM meeting WHERE (params->>'joinerId' is not null or params->>'acceptedJoiner' is not null) " +
+            "AND to_timestamp(params->>'meetingDate', 'yyyy-MM-dd HH24:MI:SS') > NOW()", nativeQuery = true)
     List<Meeting> getAllMeetingsWithSubscribers();
 
     @Query(value = "SELECT * FROM meeting WHERE params->>'joinerId' is not null AND inviter_id = ?1", nativeQuery = true)
