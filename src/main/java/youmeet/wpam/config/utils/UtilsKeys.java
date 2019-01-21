@@ -31,4 +31,5 @@ public class UtilsKeys {
     public static final String MEETING_COUNTER = "meetingCounter";
     public static final String FIRST_TIME_LOGGING = "firstTimeLogging";
     public static final String MEETING_DATE = "meetingDate";
+    public static final String PICTURE_URL = "pictureUrl";
 }
