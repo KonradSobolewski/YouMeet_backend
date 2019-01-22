@@ -66,6 +66,15 @@ public class UserController {
         return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping(value = "/uploadToSThree")
+    public ResponseEntity uploadToS3(@RequestParam(value = "id") Long id, @RequestParam(value = "url") String url) {
+        try {
+            return ResponseEntity.ok(userService.uploadToS3(url, id));
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping(value = "/createUser")
     public ResponseEntity createUser(@Valid @RequestBody UserSmallDTO dto) {
         if (dto == null) {

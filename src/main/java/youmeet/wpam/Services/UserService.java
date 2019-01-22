@@ -58,6 +58,15 @@ public class UserService implements UserDetailsService {
         }).orElseThrow(UserNotFoundException::new);
     }
 
+
+    public User uploadToS3(String url, Long id) throws Exception{
+        return userRepository.findById(id).map(u -> {
+            u.addParam(PICTURE_URL, url);
+            userRepository.save(u);
+            return u;
+        }).orElseThrow(Exception::new);
+    }
+
     public User getUserByEmail(String email) throws UserNotFoundException {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent()) {
@@ -67,6 +76,7 @@ public class UserService implements UserDetailsService {
         }
 
     }
+
 
     @Transactional
     public User saveUser(User user) {
@@ -130,10 +140,14 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
+
+
     public boolean checkIfUserExistsByEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         return user.isPresent();
     }
+
+
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
@@ -211,4 +225,6 @@ public class UserService implements UserDetailsService {
         }
 
     }
+
+
 }
