@@ -61,7 +61,7 @@ public class UserService implements UserDetailsService {
 
     public User uploadToS3(String url, Long id) throws Exception{
         return userRepository.findById(id).map(u -> {
-            u.addParam(PICTURE_URL, url);
+            u.addParam(PHOTO, url);
             userRepository.save(u);
             return u;
         }).orElseThrow(Exception::new);
